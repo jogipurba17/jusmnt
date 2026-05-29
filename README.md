@@ -1,1 +1,2213 @@
-# jusmnt
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FreshJus — Jus Segar Premium</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --green:#2d6a4f;--green-light:#52b788;--green-pale:#d8f3dc;
+  --orange:#f4845f;--orange-light:#fbb13c;--yellow:#ffd166;
+  --cream:#fefae0;--dark:#1b1b2f;--gray:#6c757d;--white:#fff;
+  --red:#e63946;--blue:#1d3557;
+  --shadow:0 8px 32px rgba(0,0,0,.12);--radius:16px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--dark);min-height:100vh}
+.page{display:none}.page.active{display:block}
+
+/* NAVBAR */
+.navbar{background:var(--white);padding:0 2rem;height:70px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 16px rgba(0,0,0,.07);position:sticky;top:0;z-index:100}
+.navbar-brand{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:900;color:var(--green);display:flex;align-items:center;gap:8px;cursor:pointer}
+.navbar-brand span{color:var(--orange)}
+.navbar-actions{display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
+.cart-btn{background:var(--green);color:#fff;border:none;padding:10px 20px;border-radius:50px;font-family:'DM Sans',sans-serif;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;transition:all .2s;font-size:.9rem}
+.cart-btn:hover{background:var(--green-light);transform:translateY(-1px)}
+.cart-badge{background:var(--orange);color:#fff;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700}
+.admin-link{color:var(--gray);font-size:.8rem;cursor:pointer;text-decoration:underline;opacity:.6}
+.admin-link:hover{opacity:1}
+.track-btn{background:var(--blue);color:#fff;border:none;padding:10px 18px;border-radius:50px;font-family:'DM Sans',sans-serif;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;transition:all .2s;font-size:.85rem}
+.track-btn:hover{background:#2a4d7a;transform:translateY(-1px)}
+
+/* HERO */
+.hero{background:linear-gradient(135deg,#1b4332 0%,#2d6a4f 50%,#52b788 100%);color:#fff;padding:5rem 2rem;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-50%;right:-20%;width:600px;height:600px;background:rgba(255,255,255,.04);border-radius:50%}
+.hero-title{font-family:'Playfair Display',serif;font-size:clamp(2.5rem,6vw,4.5rem);font-weight:900;line-height:1.1;margin-bottom:1rem}
+.hero-title em{color:var(--yellow);font-style:normal}
+.hero-sub{font-size:1.1rem;opacity:.85;max-width:500px;margin:0 auto 2rem;line-height:1.7}
+.hero-cta{background:var(--yellow);color:var(--dark);border:none;padding:14px 36px;border-radius:50px;font-size:1rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;box-shadow:0 4px 20px rgba(0,0,0,.2)}
+.hero-cta:hover{transform:translateY(-2px)}
+.hero-fruits{font-size:3rem;margin-bottom:1rem}
+.hero-track{background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.3);color:#fff;border-radius:50px;padding:10px 20px;font-family:'DM Sans',sans-serif;font-weight:600;cursor:pointer;font-size:.9rem;margin-left:12px;transition:all .2s;backdrop-filter:blur(4px)}
+.hero-track:hover{background:rgba(255,255,255,.25)}
+
+/* SECTION */
+.section{padding:4rem 2rem;max-width:1100px;margin:0 auto}
+.section-title{font-family:'Playfair Display',serif;font-size:2.2rem;font-weight:700;margin-bottom:.5rem}
+.section-sub{color:var(--gray);margin-bottom:2.5rem;font-size:1rem}
+
+/* STOCK */
+.stock-low{background:#fff3cd;border:1px solid #ffc107;color:#856404;padding:4px 10px;border-radius:20px;font-size:.72rem;font-weight:700}
+.stock-ok{background:#d4edda;border:1px solid #28a745;color:#155724;padding:4px 10px;border-radius:20px;font-size:.72rem;font-weight:700}
+.stock-out{background:#f8d7da;border:1px solid #dc3545;color:#721c24;padding:4px 10px;border-radius:20px;font-size:.72rem;font-weight:700}
+
+/* MENU GRID */
+.menu-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.5rem}
+.product-card{background:#fff;border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);transition:all .3s cubic-bezier(.34,1.56,.64,1);cursor:pointer}
+.product-card:hover{transform:translateY(-6px);box-shadow:0 16px 48px rgba(0,0,0,.15)}
+.product-card.out-of-stock{opacity:.5;cursor:not-allowed}
+.product-img{height:180px;display:flex;align-items:center;justify-content:center;font-size:5rem;position:relative;overflow:hidden;flex-direction:column;gap:8px}
+.product-img.dragon{background:linear-gradient(135deg,#ff6b6b,#ee0979,#c44dff)}
+.product-img.mango{background:linear-gradient(135deg,#f7971e,#ffd200,#f7971e)}
+.product-img.cucumber{background:linear-gradient(135deg,#56ab2f,#a8e063,#56ab2f)}
+.product-badge{position:absolute;top:12px;right:12px;background:var(--white);color:var(--green);padding:4px 10px;border-radius:20px;font-size:.72rem;font-weight:700}
+.product-body{padding:1.4rem}
+.product-name{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:700;margin-bottom:4px}
+.product-desc{color:var(--gray);font-size:.87rem;line-height:1.5;margin-bottom:.6rem}
+.product-stock-info{font-size:.8rem;margin-bottom:.8rem}
+.product-footer{display:flex;align-items:center;justify-content:space-between}
+.product-price{font-size:1.25rem;font-weight:700;color:var(--green)}
+.add-btn{background:var(--green);color:#fff;border:none;width:40px;height:40px;border-radius:50%;font-size:1.4rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.add-btn:hover{background:var(--green-light);transform:scale(1.1)}
+.add-btn:disabled{background:#ccc;cursor:not-allowed;transform:none}
+
+/* TRACK ORDER PAGE */
+.track-page{max-width:600px;margin:0 auto;padding:2rem}
+.track-search-box{background:#fff;border-radius:var(--radius);padding:2rem;box-shadow:var(--shadow);margin-bottom:1.5rem;text-align:center}
+.track-search-box h3{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;margin-bottom:.5rem}
+.track-search-box p{color:var(--gray);font-size:.9rem;margin-bottom:1.5rem}
+.track-input-row{display:flex;gap:.8rem;align-items:center}
+.track-input{flex:1;padding:12px 16px;border:2px solid #e9ecef;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:1rem;transition:border-color .2s;text-transform:uppercase}
+.track-input:focus{outline:none;border-color:var(--green)}
+.track-search-btn{background:var(--green);color:#fff;border:none;padding:12px 24px;border-radius:10px;font-family:'DM Sans',sans-serif;font-weight:700;cursor:pointer;white-space:nowrap;transition:all .2s}
+.track-search-btn:hover{background:var(--green-light)}
+.track-result{background:#fff;border-radius:var(--radius);padding:1.5rem;box-shadow:var(--shadow)}
+.track-not-found{text-align:center;padding:2rem;color:var(--gray)}
+
+/* STATUS TRACKER PELANGGAN */
+.customer-status-box{background:#fff;border-radius:14px;padding:1.2rem 1.4rem;margin-bottom:1.5rem;box-shadow:0 2px 12px rgba(0,0,0,.08);border-left:4px solid var(--green)}
+.customer-status-box h4{font-weight:700;margin-bottom:.8rem;color:var(--dark);font-size:.95rem}
+.cust-tracker{display:flex;flex-direction:column;gap:.5rem}
+.cust-step{display:flex;align-items:center;gap:10px;font-size:.85rem}
+.cust-dot{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;flex-shrink:0}
+.cust-dot.done{background:var(--green);color:#fff}
+.cust-dot.active{background:var(--orange);color:#fff}
+.cust-dot.pending{background:#e9ecef;color:#aaa}
+.cust-step-label{font-weight:600}
+.cust-step-time{font-size:.72rem;color:var(--gray);margin-left:auto}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:center;justify-content:center;padding:1rem;backdrop-filter:blur(4px)}
+.modal-overlay.open{display:flex}
+.modal{background:#fff;border-radius:20px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;animation:modalIn .3s cubic-bezier(.34,1.56,.64,1)}
+@keyframes modalIn{from{opacity:0;transform:scale(.9) translateY(20px)}}
+.modal-img{height:200px;display:flex;align-items:center;justify-content:center;font-size:5rem;border-radius:20px 20px 0 0}
+.modal-body{padding:1.5rem}
+.modal-title{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700;margin-bottom:.5rem}
+.modal-desc{color:var(--gray);font-size:.9rem;line-height:1.6;margin-bottom:1.2rem}
+.modal-price{font-size:1.4rem;font-weight:700;color:var(--green);margin-bottom:.5rem}
+.modal-stock{font-size:.85rem;margin-bottom:1.2rem}
+.qty-control{display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem}
+.qty-btn{background:var(--green-pale);color:var(--green);border:none;width:36px;height:36px;border-radius:50%;font-size:1.3rem;cursor:pointer;font-weight:700;transition:all .15s}
+.qty-btn:hover{background:var(--green);color:#fff}
+.qty-num{font-size:1.2rem;font-weight:700;min-width:30px;text-align:center}
+.add-to-cart-btn{background:var(--green);color:#fff;border:none;width:100%;padding:14px;border-radius:50px;font-size:1rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;margin-bottom:.7rem}
+.add-to-cart-btn:hover{background:var(--green-light)}
+.add-to-cart-btn:disabled{background:#ccc;cursor:not-allowed}
+.close-btn{position:absolute;top:1rem;right:1rem;background:rgba(0,0,0,.3);color:#fff;border:none;width:36px;height:36px;border-radius:50%;font-size:1.1rem;cursor:pointer;z-index:10}
+
+/* CART PAGE */
+.cart-page{max-width:800px;margin:0 auto;padding:2rem}
+.cart-title{font-family:'Playfair Display',serif;font-size:2rem;font-weight:700;margin-bottom:1.5rem}
+.cart-item{background:#fff;border-radius:var(--radius);padding:1.2rem;display:flex;align-items:center;gap:1rem;margin-bottom:1rem;box-shadow:0 2px 12px rgba(0,0,0,.06)}
+.cart-item-emoji{font-size:2.5rem;min-width:50px;text-align:center}
+.cart-item-info{flex:1}
+.cart-item-name{font-weight:700;font-size:1rem;margin-bottom:2px}
+.cart-item-price{color:var(--green);font-weight:600}
+.cart-item-controls{display:flex;align-items:center;gap:.6rem}
+.ci-qty-btn{background:var(--green-pale);border:none;width:28px;height:28px;border-radius:50%;cursor:pointer;font-weight:700;color:var(--green);font-size:1rem;transition:all .15s}
+.ci-qty-btn:hover{background:var(--green);color:#fff}
+.remove-btn{background:#fff0f0;border:none;color:var(--red);padding:6px 12px;border-radius:20px;font-size:.8rem;cursor:pointer;font-weight:600;transition:all .15s}
+.remove-btn:hover{background:var(--red);color:#fff}
+.cart-summary{background:#fff;border-radius:var(--radius);padding:1.5rem;box-shadow:var(--shadow);margin-top:1.5rem}
+.summary-row{display:flex;justify-content:space-between;margin-bottom:.7rem;font-size:.95rem}
+.summary-row.total{font-weight:700;font-size:1.2rem;border-top:2px solid var(--green-pale);padding-top:.7rem;margin-top:.5rem}
+.checkout-btn-big{background:linear-gradient(135deg,var(--green),var(--green-light));color:#fff;border:none;width:100%;padding:16px;border-radius:50px;font-size:1.05rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:1rem;transition:all .2s;box-shadow:0 4px 16px rgba(45,106,79,.3)}
+.checkout-btn-big:hover{transform:translateY(-2px)}
+.back-btn{background:none;border:2px solid var(--green);color:var(--green);padding:10px 24px;border-radius:50px;font-family:'DM Sans',sans-serif;font-weight:600;cursor:pointer;transition:all .2s;margin-bottom:1.5rem;display:inline-flex;align-items:center;gap:6px}
+.back-btn:hover{background:var(--green);color:#fff}
+.empty-cart{text-align:center;padding:4rem 2rem;color:var(--gray)}
+.empty-cart .big-emoji{font-size:4rem;margin-bottom:1rem}
+.empty-cart h3{font-size:1.4rem;margin-bottom:.5rem;color:var(--dark)}
+
+/* CHECKOUT */
+.checkout-page{max-width:700px;margin:0 auto;padding:2rem}
+.checkout-title{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:700;margin-bottom:.5rem}
+.checkout-sub{color:var(--gray);margin-bottom:2rem;font-size:.9rem}
+.form-section{background:#fff;border-radius:var(--radius);padding:1.5rem;margin-bottom:1.5rem;box-shadow:0 2px 12px rgba(0,0,0,.06)}
+.form-section h3{font-weight:700;margin-bottom:1rem;color:var(--green);display:flex;align-items:center;gap:8px}
+.form-group{margin-bottom:1rem}
+.form-label{font-size:.85rem;font-weight:600;color:var(--dark);margin-bottom:4px;display:block}
+.form-input{width:100%;padding:12px 14px;border:2px solid #e9ecef;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:.95rem;transition:border-color .2s;background:var(--cream)}
+.form-input:focus{outline:none;border-color:var(--green);background:#fff}
+textarea.form-input{resize:vertical;min-height:80px}
+
+/* DELIVERY METHOD */
+.delivery-method-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
+.delivery-option{border:2.5px solid #e9ecef;border-radius:14px;padding:1.2rem 1rem;cursor:pointer;transition:all .25s;text-align:center;position:relative;background:#fff}
+.delivery-option:hover{border-color:var(--green-light);transform:translateY(-2px)}
+.delivery-option.selected{border-color:var(--green);background:var(--green-pale)}
+.delivery-icon{font-size:2.2rem;display:block;margin-bottom:6px}
+.delivery-title{font-weight:700;font-size:.95rem;margin-bottom:2px}
+.delivery-sub{font-size:.75rem;color:var(--gray);line-height:1.4}
+.delivery-fee{font-size:.8rem;font-weight:700;color:var(--green);margin-top:6px}
+.delivery-section-body{display:none}
+.delivery-section-body.open{display:block;animation:fadeIn .25s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-6px)}}
+
+/* GPS */
+.gps-box{background:linear-gradient(135deg,#e8f4fd,#d0ebff);border:2px solid #74b9ff;border-radius:14px;padding:1.2rem;margin-bottom:1rem}
+.gps-box h4{color:#0652dd;font-weight:700;margin-bottom:.5rem;display:flex;align-items:center;gap:6px}
+.gps-coords{font-family:monospace;font-size:.85rem;color:#0652dd;background:rgba(6,82,221,.1);padding:6px 10px;border-radius:8px;margin:.5rem 0}
+.gps-status{font-size:.8rem;color:#636e72}
+.gps-fee{font-weight:700;color:#0652dd;font-size:.95rem;margin-top:.5rem}
+.gps-btn{background:#0652dd;color:#fff;border:none;padding:10px 20px;border-radius:50px;font-family:'DM Sans',sans-serif;font-weight:600;cursor:pointer;font-size:.9rem;transition:all .2s;margin-top:.5rem}
+.gps-btn:hover{background:#023cba}
+
+/* SINGLE PICKUP POINT */
+.single-pickup-box{background:var(--green-pale);border:2px solid var(--green-light);border-radius:14px;padding:1.2rem 1.4rem;display:flex;align-items:center;gap:14px}
+.single-pickup-icon{font-size:2.5rem}
+.single-pickup-name{font-weight:700;font-size:1rem;color:var(--dark);margin-bottom:2px}
+.single-pickup-detail{font-size:.82rem;color:var(--gray);line-height:1.5}
+.single-pickup-badge{display:inline-flex;align-items:center;gap:4px;background:var(--green);color:#fff;padding:3px 10px;border-radius:20px;font-size:.7rem;font-weight:700;margin-top:6px}
+
+.time-slots{display:flex;gap:8px;flex-wrap:wrap;margin-top:.5rem}
+.time-slot{border:2px solid #e9ecef;border-radius:8px;padding:6px 14px;font-size:.8rem;font-weight:600;cursor:pointer;transition:all .15s;background:#fff}
+.time-slot:hover{border-color:var(--green-light)}
+.time-slot.selected{border-color:var(--green);background:var(--green-pale);color:var(--green)}
+
+/* PAYMENT */
+.payment-methods{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin-bottom:1rem}
+.payment-option{border:2px solid #e9ecef;border-radius:10px;padding:.8rem;cursor:pointer;transition:all .2s;text-align:center;font-weight:600;font-size:.9rem}
+.payment-option:hover{border-color:var(--green-light)}
+.payment-option.selected{border-color:var(--green);background:var(--green-pale)}
+.bank-icon{font-size:1.5rem;display:block;margin-bottom:4px}
+
+/* CASH PAYMENT */
+.cash-box{background:linear-gradient(135deg,#fff9e6,#fff3cd);border:2px solid #ffc107;border-radius:14px;padding:1.2rem 1.4rem;margin-top:.5rem;display:none}
+.cash-box.open{display:block;animation:fadeIn .25s ease}
+.cash-box h4{color:#856404;font-weight:700;margin-bottom:.5rem;font-size:.95rem}
+.cash-note{font-size:.82rem;color:#856404;line-height:1.6}
+.cash-note strong{color:#5d4100}
+
+/* TRANSFER UPLOAD */
+.transfer-box{display:none;margin-top:1rem}
+.transfer-box.open{display:block;animation:fadeIn .25s ease}
+.upload-area{border:2px dashed var(--green-light);border-radius:10px;padding:2rem;text-align:center;cursor:pointer;transition:all .2s;background:var(--green-pale);position:relative}
+.upload-area:hover{border-color:var(--green)}
+.upload-area input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.upload-icon{font-size:2rem;margin-bottom:.5rem}
+.upload-text{font-size:.9rem;color:var(--gray)}
+.upload-text strong{color:var(--green)}
+.order-review{background:var(--green-pale);border-radius:10px;padding:1rem;margin-bottom:1rem}
+.order-review-item{display:flex;justify-content:space-between;font-size:.9rem;padding:4px 0}
+.order-review-total{display:flex;justify-content:space-between;font-weight:700;font-size:1rem;border-top:1px solid var(--green-light);padding-top:8px;margin-top:4px}
+.submit-order-btn{background:linear-gradient(135deg,var(--orange),var(--orange-light));color:#fff;border:none;width:100%;padding:16px;border-radius:50px;font-size:1.05rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;box-shadow:0 4px 16px rgba(244,132,95,.4)}
+.submit-order-btn:hover{transform:translateY(-2px)}
+.submit-order-btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
+
+/* SUCCESS */
+.success-page{max-width:520px;margin:0 auto;padding:3rem 2rem;text-align:center}
+.success-icon{font-size:5rem;margin-bottom:1rem;animation:bounce 1s ease infinite}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+.success-title{font-family:'Playfair Display',serif;font-size:2rem;font-weight:700;color:var(--green);margin-bottom:.5rem}
+.success-msg{color:var(--gray);line-height:1.7;margin-bottom:2rem}
+.order-id-box{background:var(--green-pale);border-radius:12px;padding:1rem;margin-bottom:1.5rem;border:2px dashed var(--green-light)}
+.order-id-label{font-size:.8rem;color:var(--gray)}
+.order-id-num{font-size:1.5rem;font-weight:700;color:var(--green);font-family:monospace}
+.success-delivery-info{background:#f0f9f4;border:2px solid var(--green-pale);border-radius:14px;padding:1rem 1.2rem;margin-bottom:1.5rem;text-align:left;font-size:.88rem}
+.success-delivery-info h4{font-weight:700;margin-bottom:.4rem;color:var(--green)}
+.success-delivery-row{display:flex;gap:6px;margin-top:4px}
+.success-delivery-row span:first-child{color:var(--gray);min-width:130px}
+.success-delivery-row span:last-child{font-weight:600}
+
+/* ORDER STATUS TRACKER */
+.order-tracker{background:#fff;border-radius:var(--radius);padding:1.5rem;box-shadow:var(--shadow);margin-bottom:1.5rem;text-align:left}
+.order-tracker h4{font-weight:700;margin-bottom:1rem;color:var(--dark)}
+.tracker-steps{display:flex;flex-direction:column;gap:.6rem}
+.tracker-step{display:flex;align-items:center;gap:10px;font-size:.88rem}
+.step-dot{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;flex-shrink:0}
+.step-dot.done{background:var(--green);color:#fff}
+.step-dot.active{background:var(--orange);color:#fff}
+.step-dot.pending{background:#e9ecef;color:#aaa}
+.step-label{font-weight:600}
+.step-time{font-size:.75rem;color:var(--gray);margin-left:auto}
+.pulse-ring{animation:pulseRing 1.5s infinite}
+@keyframes pulseRing{0%,100%{opacity:1}50%{opacity:.5}}
+
+/* SAVE ORDER REMINDER */
+.save-order-reminder{background:linear-gradient(135deg,#fff3cd,#fff9e6);border:2px solid #ffc107;border-radius:14px;padding:1rem 1.2rem;margin-bottom:1.5rem;text-align:left}
+.save-order-reminder h5{color:#856404;font-weight:700;margin-bottom:.4rem;display:flex;align-items:center;gap:6px}
+.save-order-reminder p{font-size:.82rem;color:#856404;line-height:1.5}
+.copy-id-btn{background:#856404;color:#fff;border:none;padding:7px 16px;border-radius:20px;font-family:'DM Sans',sans-serif;font-size:.8rem;font-weight:600;cursor:pointer;margin-top:.6rem;transition:all .2s}
+.copy-id-btn:hover{background:#5d4100}
+
+/* ADMIN */
+.admin-layout{display:flex;min-height:100vh}
+.sidebar{width:250px;background:var(--dark);color:#fff;padding:1.5rem;position:fixed;height:100vh;overflow-y:auto;z-index:50}
+.sidebar-brand{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:700;color:var(--green-light);margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid rgba(255,255,255,.1)}
+.sidebar-nav{list-style:none}
+.sidebar-nav li{margin-bottom:4px}
+.sidebar-nav li a{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;color:rgba(255,255,255,.7);text-decoration:none;font-size:.9rem;font-weight:500;cursor:pointer;transition:all .2s}
+.sidebar-nav li a:hover,.sidebar-nav li a.active{background:rgba(255,255,255,.1);color:#fff}
+.sidebar-nav li a.active{background:var(--green)}
+.admin-main{margin-left:250px;flex:1;background:#f0f4f8;min-height:100vh}
+.admin-topbar{background:#fff;padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between;box-shadow:0 1px 8px rgba(0,0,0,.06);position:sticky;top:0;z-index:10}
+.admin-topbar h1{font-size:1.2rem;font-weight:700}
+.admin-user{display:flex;align-items:center;gap:8px;font-size:.9rem}
+.admin-avatar{width:36px;height:36px;background:var(--green);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700}
+.logout-btn{background:none;border:1px solid #e9ecef;color:var(--gray);padding:6px 14px;border-radius:20px;font-family:'DM Sans',sans-serif;cursor:pointer;font-size:.85rem;transition:all .2s}
+.logout-btn:hover{border-color:var(--red);color:var(--red)}
+.admin-content{padding:2rem}
+.admin-section{display:none}
+.admin-section.active{display:block}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1.2rem;margin-bottom:2rem}
+.stat-card{background:#fff;border-radius:var(--radius);padding:1.4rem;box-shadow:0 2px 12px rgba(0,0,0,.06);position:relative;overflow:hidden}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px}
+.stat-card.green::before{background:var(--green)}
+.stat-card.orange::before{background:var(--orange)}
+.stat-card.yellow::before{background:var(--yellow)}
+.stat-card.blue::before{background:var(--blue)}
+.stat-label{font-size:.8rem;color:var(--gray);font-weight:500;margin-bottom:.5rem}
+.stat-value{font-size:1.8rem;font-weight:700;color:var(--dark)}
+.stat-sub{font-size:.78rem;color:var(--gray);margin-top:4px}
+.stat-emoji{position:absolute;bottom:1rem;right:1rem;font-size:2rem;opacity:.15}
+.table-wrapper{background:#fff;border-radius:var(--radius);overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.06)}
+.table-header{padding:1.2rem 1.5rem;border-bottom:1px solid #f0f4f8;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem}
+.table-header h3{font-weight:700}
+.search-input{padding:8px 14px;border:1px solid #e9ecef;border-radius:20px;font-family:'DM Sans',sans-serif;font-size:.85rem;outline:none;width:220px}
+.search-input:focus{border-color:var(--green)}
+table{width:100%;border-collapse:collapse}
+thead{background:#f8fafc}
+th{padding:12px 16px;text-align:left;font-size:.78rem;font-weight:700;color:var(--gray);text-transform:uppercase;letter-spacing:.5px}
+td{padding:12px 16px;border-bottom:1px solid #f0f4f8;font-size:.85rem;vertical-align:middle}
+tr:last-child td{border:none}
+tr:hover td{background:#fafbfc}
+.status-badge{display:inline-block;padding:4px 12px;border-radius:20px;font-size:.75rem;font-weight:700}
+.status-pending{background:#fff3cd;color:#856404}
+.status-verified{background:#d1ecf1;color:#0c5460}
+.status-processing{background:#cce5ff;color:#004085}
+.status-ready{background:#d4edda;color:#155724}
+.status-delivered{background:#d4edda;color:#155724}
+.status-cancelled{background:#f8d7da;color:#721c24}
+.action-btns{display:flex;gap:6px;flex-wrap:wrap}
+.action-btn{padding:5px 12px;border-radius:6px;font-size:.78rem;font-weight:600;border:none;cursor:pointer;transition:all .15s;font-family:'DM Sans',sans-serif}
+.btn-verify{background:#d1ecf1;color:#0c5460}.btn-verify:hover{background:#0c5460;color:#fff}
+.btn-process{background:#cce5ff;color:#004085}.btn-process:hover{background:#004085;color:#fff}
+.btn-ready{background:#d4edda;color:#155724}.btn-ready:hover{background:#155724;color:#fff}
+.btn-deliver{background:#b8f0c0;color:#0a3d15}.btn-deliver:hover{background:#0a3d15;color:#fff}
+.btn-cancel{background:#f8d7da;color:#721c24}.btn-cancel:hover{background:#721c24;color:#fff}
+.btn-maps{background:#e8f4fd;color:#0652dd}.btn-maps:hover{background:#0652dd;color:#fff}
+.btn-view-proof{background:#f3e8ff;color:#6b21a8}.btn-view-proof:hover{background:#6b21a8;color:#fff}
+
+/* BUKTI TRANSFER ADMIN */
+.proof-modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:500;align-items:center;justify-content:center;padding:1rem;backdrop-filter:blur(6px)}
+.proof-modal-overlay.open{display:flex}
+.proof-modal{background:#fff;border-radius:20px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;padding:1.5rem;animation:modalIn .3s ease}
+.proof-modal-title{font-weight:700;font-size:1.1rem;margin-bottom:1rem;display:flex;justify-content:space-between;align-items:center}
+.proof-img-container{border-radius:12px;overflow:hidden;border:2px solid #e9ecef;margin-bottom:1rem;text-align:center;background:#f8fafc;min-height:200px;display:flex;align-items:center;justify-content:center}
+.proof-img-container img{max-width:100%;max-height:60vh;object-fit:contain;display:block}
+.proof-no-img{text-align:center;padding:3rem;color:var(--gray)}
+.proof-no-img .no-img-icon{font-size:3rem;margin-bottom:.5rem}
+.proof-payment-type{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:20px;font-weight:700;font-size:.85rem;margin-bottom:1rem}
+.proof-payment-type.transfer{background:#d4edda;color:#155724}
+.proof-payment-type.cash{background:#fff3cd;color:#856404}
+
+/* PRODUCT MANAGEMENT */
+.product-mgmt-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1.2rem}
+.product-mgmt-card{background:#fff;border-radius:var(--radius);padding:1.4rem;box-shadow:0 2px 12px rgba(0,0,0,.06)}
+.pmg-emoji{font-size:3rem;margin-bottom:.5rem}
+.pmg-name{font-weight:700;font-size:1rem;margin-bottom:.5rem}
+.pmg-row{display:flex;align-items:center;gap:8px;margin-bottom:.7rem}
+.pmg-label{font-size:.82rem;color:var(--gray);min-width:60px}
+.pmg-input{flex:1;padding:8px 10px;border:1.5px solid #e9ecef;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.9rem;transition:border-color .2s}
+.pmg-input:focus{outline:none;border-color:var(--green)}
+.pmg-save-btn{background:var(--green);color:#fff;border:none;padding:8px 14px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.82rem;cursor:pointer;font-weight:600;transition:all .15s}
+.pmg-save-btn:hover{background:var(--green-light)}
+.pmg-toggle{display:flex;align-items:center;justify-content:space-between;font-size:.85rem;margin-top:.5rem}
+.toggle-switch{width:44px;height:24px;background:#e9ecef;border-radius:12px;position:relative;cursor:pointer;transition:background .2s}
+.toggle-switch.on{background:var(--green)}
+.toggle-switch::after{content:'';position:absolute;width:18px;height:18px;background:#fff;border-radius:50%;top:3px;left:3px;transition:left .2s;box-shadow:0 1px 4px rgba(0,0,0,.2)}
+.toggle-switch.on::after{left:23px}
+.live-sync-badge{display:inline-flex;align-items:center;gap:4px;background:#d4edda;color:#155724;padding:3px 10px;border-radius:20px;font-size:.7rem;font-weight:700;margin-top:.5rem}
+
+/* ADMIN LOGIN */
+.admin-login-page{min-height:100vh;background:linear-gradient(135deg,#1b4332 0%,#2d6a4f 100%);display:flex;align-items:center;justify-content:center;padding:2rem}
+.login-card{background:#fff;border-radius:24px;padding:2.5rem;width:100%;max-width:400px;text-align:center;box-shadow:0 24px 64px rgba(0,0,0,.3);animation:modalIn .4s ease}
+.login-logo{font-size:3rem;margin-bottom:.5rem}
+.login-title{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700;color:var(--green);margin-bottom:.3rem}
+.login-sub{color:var(--gray);font-size:.85rem;margin-bottom:2rem}
+.login-error{background:#f8d7da;color:#721c24;padding:10px;border-radius:8px;font-size:.85rem;margin-bottom:1rem;display:none}
+.login-btn{background:linear-gradient(135deg,var(--green),var(--green-light));color:#fff;border:none;width:100%;padding:14px;border-radius:50px;font-size:1rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;margin-top:.5rem}
+.login-btn:hover{transform:translateY(-1px)}
+.login-hint{font-size:.75rem;color:var(--gray);margin-top:1rem}
+.back-to-store{color:var(--green);cursor:pointer;font-size:.85rem;margin-top:1rem;display:block}
+
+/* TOAST */
+.toast{position:fixed;bottom:2rem;right:2rem;background:var(--dark);color:#fff;padding:14px 24px;border-radius:50px;font-size:.9rem;font-weight:500;z-index:999;transform:translateY(100px);transition:transform .3s cubic-bezier(.34,1.56,.64,1);display:flex;align-items:center;gap:8px;box-shadow:var(--shadow);max-width:350px}
+.toast.show{transform:translateY(0)}
+.toast.green{background:var(--green)}
+.toast.orange{background:var(--orange)}
+.toast.red{background:var(--red)}
+
+/* REAL-TIME NOTIFICATION */
+.realtime-notif{position:fixed;top:80px;right:1.5rem;z-index:500;display:flex;flex-direction:column;gap:.5rem;max-width:320px}
+.rn-card{background:#fff;border-radius:12px;padding:.8rem 1rem;box-shadow:0 4px 20px rgba(0,0,0,.15);border-left:4px solid var(--green);animation:slideInRight .4s ease;font-size:.85rem}
+@keyframes slideInRight{from{transform:translateX(100%);opacity:0}}
+.rn-card.warning{border-color:var(--orange)}
+.rn-card.error{border-color:var(--red)}
+.rn-card .rn-title{font-weight:700;margin-bottom:2px}
+.rn-card .rn-msg{color:var(--gray);font-size:.8rem}
+
+/* TYPE BADGE */
+.type-badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.72rem;font-weight:700}
+.type-pickup{background:#e3f2fd;color:#1565c0}
+.type-gps{background:#e8f5e9;color:#1b5e20}
+.type-cash{background:#fff9e6;color:#856404}
+
+/* ORDER DETAIL MODAL */
+.order-detail-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:300;align-items:center;justify-content:center;padding:1rem;backdrop-filter:blur(4px)}
+.order-detail-overlay.open{display:flex}
+.order-detail-modal{background:#fff;border-radius:20px;width:100%;max-width:540px;max-height:88vh;overflow-y:auto;padding:2rem;animation:modalIn .3s ease}
+.odm-title{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:700;margin-bottom:1rem}
+.odm-row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #f0f4f8;font-size:.88rem}
+.odm-row:last-child{border:none}
+.odm-label{color:var(--gray)}
+.odm-value{font-weight:600;text-align:right;max-width:60%}
+.odm-close{float:right;background:none;border:1px solid #e9ecef;padding:6px 14px;border-radius:20px;cursor:pointer;font-family:'DM Sans'}
+
+/* CHARTS */
+.charts-row{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:2rem}
+.chart-card{background:#fff;border-radius:var(--radius);padding:1.5rem;box-shadow:0 2px 12px rgba(0,0,0,.06)}
+.chart-title{font-weight:700;margin-bottom:1.2rem}
+.bar-chart{display:flex;align-items:flex-end;gap:12px;height:120px;padding-top:1rem}
+.bar-item{flex:1;display:flex;flex-direction:column;align-items:center}
+.bar{width:100%;border-radius:6px 6px 0 0;transition:height .5s ease}
+.bar-label{font-size:.7rem;color:var(--gray);margin-top:4px;text-align:center}
+.bar-val{font-size:.7rem;font-weight:700;margin-bottom:2px}
+.pie-legend{display:flex;flex-direction:column;gap:8px}
+.pie-row{display:flex;align-items:center;gap:8px;font-size:.85rem}
+.pie-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0}
+.pie-bar-track{flex:1;background:#f0f4f8;border-radius:4px;height:6px}
+.pie-bar-fill{height:6px;border-radius:4px}
+
+/* SPINNER */
+.spinner{display:inline-block;width:18px;height:18px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.tag{display:inline-block;background:var(--green-pale);color:var(--green);border-radius:20px;padding:2px 10px;font-size:.75rem;font-weight:600;margin-bottom:8px}
+.modal-relative{position:relative}
+
+/* WISHLIST BTN */
+.wishlist-btn{background:var(--yellow);color:var(--dark);border:none;padding:10px 20px;border-radius:50px;font-family:'DM Sans',sans-serif;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;transition:all .2s;font-size:.9rem}
+.wishlist-btn:hover{filter:brightness(.95);transform:translateY(-1px)}
+
+/* MAPS LINK */
+.maps-link{display:inline-flex;align-items:center;gap:5px;background:#0652dd;color:#fff;padding:7px 16px;border-radius:20px;font-size:.82rem;font-weight:600;text-decoration:none;transition:all .2s}
+.maps-link:hover{background:#023cba}
+
+/* ADMIN PAYMENT PROOF INLINE */
+.admin-proof-thumb{width:60px;height:60px;border-radius:8px;object-fit:cover;border:2px solid #e9ecef;cursor:pointer;transition:transform .2s}
+.admin-proof-thumb:hover{transform:scale(1.08);border-color:var(--green)}
+.proof-cash-badge{display:inline-flex;align-items:center;gap:4px;background:#fff3cd;color:#856404;border:1px solid #ffc107;padding:4px 10px;border-radius:20px;font-size:.75rem;font-weight:700}
+
+/* GPS DELIVERY INFO BOX */
+.gps-delivery-result{background:linear-gradient(135deg,#e8f5e9,#d4edda);border:2px solid var(--green-light);border-radius:14px;padding:1rem 1.2rem;margin-top:.8rem;display:none}
+.gps-delivery-result.show{display:block;animation:fadeIn .3s ease}
+.gps-delivery-result h5{color:var(--green);font-weight:700;margin-bottom:.6rem;display:flex;align-items:center;gap:6px}
+.route-row{display:flex;justify-content:space-between;font-size:.85rem;padding:3px 0}
+.route-row span:first-child{color:var(--gray)}
+.route-row span:last-child{font-weight:600}
+
+@media(max-width:768px){
+  .sidebar{display:none}.admin-main{margin-left:0}
+  .charts-row{grid-template-columns:1fr}
+  .payment-methods{grid-template-columns:1fr 1fr}
+  .delivery-method-grid{grid-template-columns:1fr}
+  .navbar{padding:0 1rem}
+  .navbar-actions{gap:.5rem}
+  .cart-btn,.wishlist-btn,.track-btn{padding:8px 12px;font-size:.8rem}
+}
+</style>
+</head>
+<body>
+
+<div class="toast" id="toast"></div>
+<div class="realtime-notif" id="realtime-notif"></div>
+
+<!-- ==================== HOME ==================== -->
+<div class="page active" id="page-home">
+  <nav class="navbar">
+    <div class="navbar-brand" onclick="goHome()">🥤 Fresh<span>Jus</span></div>
+    <div class="navbar-actions">
+      <button class="track-btn" onclick="showPage('page-track')">📦 Lacak Pesanan</button>
+      <button class="wishlist-btn" onclick="showPage('page-wishlist')">🛒 Simpan Nanti <span class="cart-badge" id="wishlist-count">0</span></button>
+      <button class="cart-btn" onclick="showPage('page-cart')">🛍️ Keranjang <span class="cart-badge" id="cart-count">0</span></button>
+      <span class="admin-link" onclick="showPage('page-admin-login')">Admin ↗</span>
+    </div>
+  </nav>
+  <div class="hero">
+    <div class="hero-fruits">🐉🥭🥒</div>
+    <h1 class="hero-title">Jus Segar,<br><em>Hidup Sehat</em></h1>
+    <p class="hero-sub">Nikmati kesegaran alami dari Buah Naga, Mangga, dan Timun pilihan terbaik. Tersedia di Gedung 77 Ilmu Komputer UNIMED.</p>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+      <button class="hero-cta" onclick="document.getElementById('menu-section').scrollIntoView({behavior:'smooth'})">Lihat Menu →</button>
+      <button class="hero-track" onclick="showPage('page-track')">📦 Lacak Pesanan</button>
+    </div>
+  </div>
+  <div class="section" id="menu-section">
+    <h2 class="section-title">Menu Jus Segar</h2>
+    <p class="section-sub">Harga &amp; stok diperbarui oleh admin — selalu fresh!</p>
+    <div class="menu-grid" id="menu-grid"></div>
+  </div>
+</div>
+
+<!-- ==================== LACAK PESANAN ==================== -->
+<div class="page" id="page-track">
+  <nav class="navbar">
+    <div class="navbar-brand" onclick="goHome()">🥤 Fresh<span>Jus</span></div>
+    <div class="navbar-actions">
+      <button class="cart-btn" onclick="showPage('page-cart')">🛍️ Keranjang <span class="cart-badge" id="cart-count-track">0</span></button>
+    </div>
+  </nav>
+  <div class="track-page">
+    <button class="back-btn" onclick="goHome()">← Kembali</button>
+    <div class="track-search-box">
+      <h3>📦 Lacak Pesanan Anda</h3>
+      <p>Masukkan ID Pesanan yang Anda terima setelah memesan (contoh: FJ-123456)</p>
+      <div class="track-input-row">
+        <input type="text" class="track-input" id="track-input" placeholder="FJ-XXXXXX" oninput="this.value=this.value.toUpperCase()">
+        <button class="track-search-btn" onclick="trackOrder()">🔍 Lacak</button>
+      </div>
+    </div>
+    <div id="track-result"></div>
+  </div>
+</div>
+
+<!-- ==================== WISHLIST ==================== -->
+<div class="page" id="page-wishlist">
+  <nav class="navbar">
+    <div class="navbar-brand" onclick="goHome()">🥤 Fresh<span>Jus</span></div>
+    <div class="navbar-actions">
+      <button class="cart-btn" onclick="showPage('page-cart')">🛍️ Keranjang <span class="cart-badge" id="cart-count-2">0</span></button>
+    </div>
+  </nav>
+  <div class="cart-page">
+    <button class="back-btn" onclick="goHome()">← Kembali</button>
+    <h2 class="cart-title">🛒 Keranjang Kuning</h2>
+    <p style="color:var(--gray);margin-bottom:1.5rem;font-size:.9rem">Item yang disimpan untuk nanti</p>
+    <div id="wishlist-items"></div>
+  </div>
+</div>
+
+<!-- ==================== CART ==================== -->
+<div class="page" id="page-cart">
+  <nav class="navbar">
+    <div class="navbar-brand" onclick="goHome()">🥤 Fresh<span>Jus</span></div>
+    <div class="navbar-actions">
+      <button class="wishlist-btn" onclick="showPage('page-wishlist')">🛒 Simpan Nanti <span class="cart-badge" id="wishlist-count-2">0</span></button>
+    </div>
+  </nav>
+  <div class="cart-page">
+    <button class="back-btn" onclick="goHome()">← Lanjut Belanja</button>
+    <h2 class="cart-title">🛍️ Keranjang Belanja</h2>
+    <div id="cart-items"></div>
+    <div id="cart-summary-section"></div>
+  </div>
+</div>
+
+<!-- ==================== CHECKOUT ==================== -->
+<div class="page" id="page-checkout">
+  <nav class="navbar">
+    <div class="navbar-brand" onclick="goHome()">🥤 Fresh<span>Jus</span></div>
+  </nav>
+  <div class="checkout-page">
+    <button class="back-btn" onclick="showPage('page-cart')">← Kembali ke Keranjang</button>
+    <h2 class="checkout-title">Konfirmasi Pesanan</h2>
+    <p class="checkout-sub">Lengkapi data dan pilih cara pengambilan pesanan Anda</p>
+
+    <div class="form-section">
+      <h3>📦 Detail Pesanan</h3>
+      <div class="order-review" id="checkout-order-review"></div>
+    </div>
+
+    <div class="form-section">
+      <h3>🚚 Cara Pengambilan</h3>
+      <div class="delivery-method-grid">
+        <div class="delivery-option selected" id="opt-pickup" onclick="selectDelivery('pickup')">
+          <span class="delivery-icon">🏃</span>
+          <div class="delivery-title">Ambil Sendiri</div>
+          <div class="delivery-sub">Jemput di Gedung 77 Ilmu Komputer UNIMED</div>
+          <div class="delivery-fee">Gratis</div>
+        </div>
+        <div class="delivery-option" id="opt-gps" onclick="selectDelivery('gps')">
+          <span class="delivery-icon">📍</span>
+          <div class="delivery-title">Antar ke Lokasi Anda</div>
+          <div class="delivery-sub">Diantar via rute tercepat ke koordinat GPS Anda</div>
+          <div class="delivery-fee" id="gps-fee-label">Rp 3.000/km</div>
+        </div>
+      </div>
+
+      <!-- PICKUP SECTION -->
+      <div class="delivery-section-body open" id="section-pickup" style="margin-top:1rem">
+        <label class="form-label" style="margin-bottom:.7rem;display:block">📍 Titik Penjemputan</label>
+        <div class="single-pickup-box">
+          <div class="single-pickup-icon">🏫</div>
+          <div>
+            <div class="single-pickup-name">Gedung 77 — Prodi Ilmu Komputer UNIMED</div>
+            <div class="single-pickup-detail">
+              Jl. Willem Iskandar Psr V, Kenangan Baru,<br>
+              Percut Sei Tuan, Deli Serdang, Sumatera Utara<br>
+              <strong>Universitas Negeri Medan (UNIMED)</strong><br>
+              Buka setiap hari 07.00 – 20.00
+            </div>
+            <div class="single-pickup-badge">✓ Satu-satunya titik penjemputan</div>
+            <div style="margin-top:8px">
+              <a href="https://www.google.com/maps/place/Gedung+77+Ilmu+Komputer+-+UNIMED/@3.6066002,98.7142641,19z" target="_blank" class="maps-link" style="font-size:.75rem;padding:5px 12px">🗺️ Lihat di Google Maps ↗</a>
+            </div>
+          </div>
+        </div>
+        <div class="form-group" style="margin-top:1rem">
+          <label class="form-label">⏰ Waktu Penjemputan</label>
+          <div class="time-slots" id="pickup-time-slots">
+            <div class="time-slot selected" onclick="selectTimeSlot(this,'08.00–09.00')">08.00–09.00</div>
+            <div class="time-slot" onclick="selectTimeSlot(this,'09.00–10.00')">09.00–10.00</div>
+            <div class="time-slot" onclick="selectTimeSlot(this,'10.00–11.00')">10.00–11.00</div>
+            <div class="time-slot" onclick="selectTimeSlot(this,'11.00–12.00')">11.00–12.00</div>
+            <div class="time-slot" onclick="selectTimeSlot(this,'13.00–14.00')">13.00–14.00</div>
+            <div class="time-slot" onclick="selectTimeSlot(this,'14.00–15.00')">14.00–15.00</div>
+            <div class="time-slot" onclick="selectTimeSlot(this,'15.00–16.00')">15.00–16.00</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- GPS SECTION -->
+      <div class="delivery-section-body" id="section-gps" style="margin-top:1rem">
+        <div class="gps-box">
+          <h4>📍 Pengantaran via Rute Tercepat</h4>
+          <p style="font-size:.82rem;color:#636e72;margin-bottom:.8rem">
+            Rute terpendek dan tercepat dari <strong>Gedung 77 Ilmu Komputer UNIMED</strong> ke lokasi Anda akan dipilih <strong>otomatis</strong>.<br>
+            Tarif: <strong>Rp 3.000 per km</strong>.
+          </p>
+          <div id="gps-status-display">
+            <div class="gps-status">📡 Klik tombol di bawah untuk mendeteksi lokasi Anda...</div>
+          </div>
+          <button class="gps-btn" id="gps-detect-btn" onclick="detectGPS()">📍 Deteksi Lokasi Saya Sekarang</button>
+        </div>
+
+        <!-- Hasil rute otomatis — muncul setelah GPS terdeteksi -->
+        <div class="gps-delivery-result" id="gps-delivery-result">
+          <h5>🏍️ Rute Pengantaran Otomatis</h5>
+          <div id="gps-delivery-content"></div>
+        </div>
+
+        <div class="form-group" style="margin-top:1rem">
+          <label class="form-label">📝 Keterangan Tambahan (opsional)</label>
+          <input type="text" class="form-input" id="input-gps-detail" placeholder="Contoh: Di depan gedung merah, lantai 2...">
+        </div>
+        <div class="form-group">
+          <label class="form-label">⏰ Waktu Pengantaran</label>
+          <div class="time-slots" id="gps-time-slots">
+            <div class="time-slot selected" onclick="selectGPSTimeSlot(this,'09.00–10.00')">09.00–10.00</div>
+            <div class="time-slot" onclick="selectGPSTimeSlot(this,'10.00–11.00')">10.00–11.00</div>
+            <div class="time-slot" onclick="selectGPSTimeSlot(this,'11.00–12.00')">11.00–12.00</div>
+            <div class="time-slot" onclick="selectGPSTimeSlot(this,'13.00–14.00')">13.00–14.00</div>
+            <div class="time-slot" onclick="selectGPSTimeSlot(this,'14.00–15.00')">14.00–15.00</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <h3>👤 Data Pemesan</h3>
+      <div class="form-group">
+        <label class="form-label">Nama Lengkap</label>
+        <input type="text" class="form-input" id="input-name" placeholder="Masukkan nama lengkap Anda">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Nomor WhatsApp</label>
+        <input type="text" class="form-input" id="input-phone" placeholder="08xxxxxxxxxx">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Catatan Tambahan (opsional)</label>
+        <input type="text" class="form-input" id="input-notes" placeholder="Contoh: Tanpa es, gula sedikit...">
+      </div>
+    </div>
+
+    <!-- METODE PEMBAYARAN -->
+    <div class="form-section">
+      <h3>💳 Metode Pembayaran</h3>
+      <div class="payment-methods" style="margin-bottom:.8rem">
+        <div class="payment-option selected" id="pay-mode-transfer" onclick="selectPayMode('transfer')">
+          <span class="bank-icon">🏦</span>
+          <div style="font-weight:700">Transfer Bank</div>
+          <div style="font-size:.72rem;color:var(--gray);margin-top:2px">Bayar via rekening</div>
+        </div>
+        <div class="payment-option" id="pay-mode-cash" onclick="selectPayMode('cash')">
+          <span class="bank-icon">💵</span>
+          <div style="font-weight:700">Bayar di Tempat</div>
+          <div style="font-size:.72rem;color:var(--gray);margin-top:2px">Cash saat ambil / terima</div>
+        </div>
+      </div>
+
+      <div id="transfer-section" class="transfer-box open">
+        <p style="font-size:.85rem;color:var(--gray);margin-bottom:.8rem">Pilih bank tujuan transfer:</p>
+        <div class="payment-methods">
+          <div class="payment-option selected" onclick="selectBank(this,'BNI')">
+            <span class="bank-icon">🏦</span>BNI<br><small style="font-size:.7rem;font-weight:400">2049385070</small>
+          </div>
+          <div class="payment-option" onclick="selectBank(this,'Mandiri')">
+            <span class="bank-icon">🏛️</span>Mandiri<br><small style="font-size:.7rem;font-weight:400">1070021062361</small>
+          </div>
+          <div class="payment-option" onclick="selectBank(this,'DANA')">
+            <span class="bank-icon">🔵</span>Dana<br><small style="font-size:.7rem;font-weight:400">082276015946</small>
+          </div>
+          <div class="payment-option" onclick="selectBank(this,'SEABANK')">
+            <span class="bank-icon">🟡</span>SeaBank<br><small style="font-size:.7rem;font-weight:400">901122735836</small>
+          </div>
+        </div>
+      </div>
+
+      <div class="cash-box" id="cash-section">
+        <h4>💵 Bayar di Tempat (Cash)</h4>
+        <p class="cash-note">
+          Pembayaran dilakukan secara tunai saat Anda <strong>mengambil pesanan</strong> di Gedung 77 Ilmu Komputer UNIMED atau saat kurir <strong>mengantarkan pesanan</strong> ke lokasi Anda.<br><br>
+          ⚠️ Siapkan uang pas untuk mempercepat proses.
+        </p>
+      </div>
+    </div>
+
+    <!-- Upload Bukti Transfer -->
+    <div class="form-section" id="upload-section">
+      <h3>📄 Upload Bukti Transfer</h3>
+      <div class="upload-area" id="upload-area">
+        <input type="file" accept="image/*" id="bukti-input" onchange="handleFileUpload(this)">
+        <div class="upload-icon">📤</div>
+        <div class="upload-text"><strong>Klik untuk upload</strong> atau seret file ke sini<br>Format: JPG, PNG (maks 5MB)</div>
+      </div>
+      <div id="upload-preview" style="margin-top:.7rem;display:none">
+        <span style="color:var(--green);font-size:.85rem;font-weight:600">✓ File berhasil dipilih: </span><span id="upload-filename" style="font-size:.85rem"></span>
+        <div id="upload-img-preview" style="margin-top:.5rem;border-radius:10px;overflow:hidden;max-width:200px;border:2px solid var(--green-light)">
+          <img id="upload-img-tag" src="" alt="Bukti" style="width:100%;display:block">
+        </div>
+      </div>
+    </div>
+
+    <div class="form-section" style="background:var(--green-pale);border:2px solid var(--green-light)">
+      <h3 style="color:var(--dark)">🧾 Ringkasan Pembayaran</h3>
+      <div id="final-summary"></div>
+    </div>
+
+    <button class="submit-order-btn" id="submit-btn" onclick="submitOrder()">🚀 Kirim Pesanan</button>
+  </div>
+</div>
+
+<!-- ==================== SUCCESS ==================== -->
+<div class="page" id="page-success">
+  <nav class="navbar">
+    <div class="navbar-brand" onclick="goHome()">🥤 Fresh<span>Jus</span></div>
+  </nav>
+  <div class="success-page">
+    <div class="success-icon">🎉</div>
+    <h2 class="success-title">Pesanan Diterima!</h2>
+    <p class="success-msg" id="success-msg-text">Terima kasih sudah memesan di FreshJus.</p>
+
+    <div class="order-id-box">
+      <div class="order-id-label">ID Pesanan Anda</div>
+      <div class="order-id-num" id="success-order-id">FJ-000000</div>
+    </div>
+
+    <div class="save-order-reminder">
+      <h5>💾 Simpan ID Pesanan Anda!</h5>
+      <p>ID ini digunakan untuk melacak status pesanan kapan saja, bahkan setelah menutup halaman ini.</p>
+      <button class="copy-id-btn" onclick="copyOrderId()">📋 Salin ID Pesanan</button>
+    </div>
+
+    <div class="order-tracker" id="success-tracker">
+      <h4>📊 Status Pesanan Real-time</h4>
+      <div style="font-size:.8rem;color:var(--gray);margin-bottom:.8rem">Status diperbarui otomatis ketika admin memproses pesanan Anda</div>
+      <div class="tracker-steps" id="tracker-steps"></div>
+    </div>
+
+    <div class="success-delivery-info" id="success-delivery-info"></div>
+
+    <div style="display:flex;gap:1rem;flex-wrap:wrap">
+      <button class="checkout-btn-big" onclick="goTrackPage()" style="flex:1;background:linear-gradient(135deg,var(--blue),#2a4d7a)">📦 Lacak Pesanan</button>
+      <button class="checkout-btn-big" onclick="goHome()" style="flex:1">🛍️ Pesan Lagi</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== ADMIN LOGIN ==================== -->
+<div class="page" id="page-admin-login">
+  <div class="admin-login-page">
+    <div class="login-card">
+      <div class="login-logo">🔐</div>
+      <h2 class="login-title">Admin Panel</h2>
+      <p class="login-sub">Masuk dengan akun administrator</p>
+      <div class="login-error" id="login-error">Username atau password salah!</div>
+      <div class="form-group">
+        <label class="form-label" style="text-align:left;display:block">Username</label>
+        <input type="text" class="form-input" id="admin-user" placeholder="admin" value="admin">
+      </div>
+      <div class="form-group" style="margin-top:.7rem">
+        <label class="form-label" style="text-align:left;display:block">Password</label>
+        <input type="password" class="form-input" id="admin-pass" placeholder="••••••••" onkeydown="if(event.key==='Enter')adminLogin()">
+      </div>
+      <button class="login-btn" onclick="adminLogin()">Masuk →</button>
+      <span class="back-to-store" onclick="goHome()">← Kembali ke Toko</span>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== ADMIN DASHBOARD ==================== -->
+<div class="page" id="page-admin">
+  <div class="admin-layout">
+    <aside class="sidebar">
+      <div class="sidebar-brand">🥤 FreshJus<br><small style="font-size:.75rem;opacity:.6;font-family:'DM Sans'">Admin Panel</small></div>
+      <ul class="sidebar-nav">
+        <li><a onclick="adminNav('dashboard')" class="active" id="nav-dashboard">📊 Dashboard</a></li>
+        <li><a onclick="adminNav('orders')" id="nav-orders">📋 Pesanan <span id="pending-count-badge" style="background:var(--orange);color:#fff;border-radius:20px;padding:1px 7px;font-size:.7rem;margin-left:4px">0</span></a></li>
+        <li><a onclick="adminNav('products')" id="nav-products">🥤 Produk &amp; Stok</a></li>
+        <li><a onclick="adminNav('reports')" id="nav-reports">📈 Laporan</a></li>
+      </ul>
+    </aside>
+
+    <main class="admin-main">
+      <div class="admin-topbar">
+        <h1 id="admin-page-title">Dashboard</h1>
+        <div style="display:flex;align-items:center;gap:1rem">
+          <div class="admin-user">
+            <div class="admin-avatar">A</div>
+            <span style="font-size:.9rem">Administrator</span>
+            <button class="logout-btn" onclick="adminLogout()">Keluar</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="admin-content">
+        <!-- DASHBOARD -->
+        <div class="admin-section active" id="admin-dashboard">
+          <div class="stats-grid" id="stats-grid"></div>
+          <div class="charts-row">
+            <div class="chart-card">
+              <div class="chart-title">📊 Penjualan per Produk (Selesai)</div>
+              <div class="bar-chart" id="bar-chart"></div>
+            </div>
+            <div class="chart-card">
+              <div class="chart-title">🥧 Distribusi Pendapatan (Selesai)</div>
+              <div class="pie-legend" id="pie-legend"></div>
+            </div>
+          </div>
+          <div style="margin-top:2rem">
+            <div class="table-wrapper">
+              <div class="table-header"><h3>🔔 Pesanan Terbaru</h3></div>
+              <table><thead><tr>
+                <th>ID</th><th>Pelanggan</th><th>Produk</th><th>Total</th><th>Pembayaran</th><th>Status</th><th>Aksi</th>
+              </tr></thead>
+              <tbody id="recent-orders-tbody"></tbody></table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ORDERS -->
+        <div class="admin-section" id="admin-orders">
+          <div class="table-wrapper">
+            <div class="table-header">
+              <h3>📋 Semua Pesanan</h3>
+              <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+                <select id="filter-status" onchange="filterOrders()" style="padding:7px 12px;border:1px solid #e9ecef;border-radius:20px;font-family:'DM Sans';font-size:.82rem;outline:none">
+                  <option value="">Semua Status</option>
+                  <option value="pending">Menunggu</option>
+                  <option value="verified">Terverifikasi</option>
+                  <option value="processing">Diproses</option>
+                  <option value="ready">Siap</option>
+                  <option value="delivered">Selesai</option>
+                  <option value="cancelled">Dibatalkan</option>
+                </select>
+                <select id="filter-type" onchange="filterOrders()" style="padding:7px 12px;border:1px solid #e9ecef;border-radius:20px;font-family:'DM Sans';font-size:.82rem;outline:none">
+                  <option value="">Semua Tipe</option>
+                  <option value="pickup">Ambil Sendiri</option>
+                  <option value="gps">Antar ke Lokasi</option>
+                </select>
+                <input type="text" id="search-orders" class="search-input" placeholder="🔍 Cari pesanan..." oninput="filterOrders()">
+              </div>
+            </div>
+            <div style="overflow-x:auto">
+            <table><thead><tr>
+              <th>ID</th><th>Pelanggan</th><th>WA</th><th>Produk</th><th>Total</th><th>Pembayaran</th><th>Bukti</th><th>Lokasi &amp; Rute</th><th>Status</th><th>Waktu</th><th>Aksi</th>
+            </tr></thead>
+            <tbody id="all-orders-tbody"></tbody></table>
+            </div>
+          </div>
+        </div>
+
+        <!-- PRODUCTS -->
+        <div class="admin-section" id="admin-products">
+          <div style="background:#fff3cd;border:1px solid #ffc107;border-radius:12px;padding:1rem 1.2rem;margin-bottom:1.5rem;display:flex;align-items:center;gap:10px">
+            <span style="font-size:1.4rem">⚡</span>
+            <div>
+              <strong style="font-size:.9rem">Perubahan Harga &amp; Stok Langsung Live!</strong>
+              <p style="font-size:.8rem;color:var(--gray);margin-top:2px">Setiap perubahan yang Anda simpan akan otomatis terlihat oleh pelanggan secara real-time.</p>
+            </div>
+          </div>
+          <div class="product-mgmt-grid" id="product-mgmt-grid"></div>
+        </div>
+
+        <!-- REPORTS -->
+        <div class="admin-section" id="admin-reports">
+          <div style="background:#e8f5e9;border:1px solid var(--green-light);border-radius:12px;padding:1rem 1.2rem;margin-bottom:1.5rem;font-size:.85rem;color:var(--green)">
+            ✅ <strong>Laporan hanya menghitung pesanan yang sudah SELESAI (delivered).</strong>
+          </div>
+          <div class="stats-grid" id="report-stats"></div>
+          <div style="margin-top:1.5rem" class="table-wrapper">
+            <div class="table-header"><h3>📊 Rekap Penjualan Harian</h3></div>
+            <table><thead><tr>
+              <th>Tanggal</th><th>Pesanan Selesai</th><th>Unit Terjual</th><th>Pendapatan</th><th>GPS / Pickup</th>
+            </tr></thead>
+            <tbody id="report-tbody"></tbody></table>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- ORDER DETAIL MODAL -->
+<div class="order-detail-overlay" id="order-detail-overlay">
+  <div class="order-detail-modal">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+      <h3 class="odm-title" style="margin:0" id="odm-title">Detail Pesanan</h3>
+      <button class="odm-close" onclick="closeOrderDetail()">✕ Tutup</button>
+    </div>
+    <div id="odm-content"></div>
+    <div style="margin-top:1rem;display:flex;gap:8px;flex-wrap:wrap" id="odm-actions"></div>
+  </div>
+</div>
+
+<!-- BUKTI TRANSFER MODAL (ADMIN) -->
+<div class="proof-modal-overlay" id="proof-modal-overlay" onclick="if(event.target===this)closeProofModal()">
+  <div class="proof-modal">
+    <div class="proof-modal-title">
+      <span>🖼️ Bukti Pembayaran — <span id="proof-order-id"></span></span>
+      <button onclick="closeProofModal()" style="background:none;border:1px solid #e9ecef;padding:6px 14px;border-radius:20px;cursor:pointer;font-family:'DM Sans'">✕ Tutup</button>
+    </div>
+    <div id="proof-payment-info"></div>
+    <div class="proof-img-container" id="proof-img-container"></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:.5rem" id="proof-modal-actions"></div>
+  </div>
+</div>
+
+<!-- PRODUCT DETAIL MODAL -->
+<div class="modal-overlay" id="product-modal">
+  <div class="modal modal-relative">
+    <button class="close-btn" onclick="closeModal()">✕</button>
+    <div class="modal-img" id="modal-img"></div>
+    <div class="modal-body">
+      <span class="tag" id="modal-tag"></span>
+      <h3 class="modal-title" id="modal-name"></h3>
+      <p class="modal-desc" id="modal-desc"></p>
+      <div class="modal-price" id="modal-price"></div>
+      <div class="modal-stock" id="modal-stock"></div>
+      <div class="qty-control">
+        <button class="qty-btn" onclick="changeQty(-1)">−</button>
+        <span class="qty-num" id="modal-qty">1</span>
+        <button class="qty-btn" onclick="changeQty(1)">+</button>
+      </div>
+      <button class="add-to-cart-btn" id="modal-add-btn" onclick="addToCart()">🛍️ Tambah ke Keranjang</button>
+      <button onclick="addToWishlist()" style="background:var(--yellow);color:var(--dark);border:none;width:100%;padding:12px;border-radius:50px;font-size:.9rem;font-weight:600;cursor:pointer;font-family:'DM Sans';transition:all .2s;margin-top:.5rem">🛒 Simpan ke Keranjang Kuning</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===================== SHARED STATE =====================
+const DB = {
+  products: [
+    {id:'dragon',  name:'Jus Buah Naga', emoji:'🐉', tag:'Antioksidan Tinggi', desc:'Segar dan kaya antioksidan dari buah naga merah pilihan. Mengandung vitamin C dan betalain alami yang menyehatkan.',  price:10000, gradient:'dragon',   stock:50, active:true},
+    {id:'mango',   name:'Jus Mangga',    emoji:'🥭', tag:'Best Seller',        desc:'Manisnya mangga harum manis pilihan diblender fresh setiap hari. Kaya vitamin A dan rasanya tak tertandingi.',            price:10000, gradient:'mango',    stock:80, active:true},
+    {id:'cucumber',name:'Jus Timun',     emoji:'🥒', tag:'Detox & Segar',      desc:'Menyegarkan dan detox alami dari timun segar. Bantu hidrasi tubuh dan menjaga kulit tetap sehat bercahaya.',             price:8000,  gradient:'cucumber', stock:60, active:true}
+  ],
+  orders: [],
+  lastUpdate: Date.now()
+};
+
+// BroadcastChannel for real-time cross-tab sync
+let bc;
+try {
+  bc = new BroadcastChannel('freshjus_live_v3');
+  bc.onmessage = (e) => {
+    const msg = e.data;
+    if (msg.type === 'SYNC') {
+      if (msg.products) DB.products = msg.products;
+      if (msg.orders)   DB.orders   = msg.orders;
+      DB.lastUpdate = Date.now();
+      handleSyncEvent(msg.event, msg);
+    }
+  };
+} catch(e) { bc = null; }
+
+function broadcast(event, extra) {
+  if (!bc) return;
+  bc.postMessage({ type:'SYNC', event, products: DB.products, orders: DB.orders, ...extra });
+}
+
+function handleSyncEvent(event, msg) {
+  const activePage = document.querySelector('.page.active')?.id;
+  if (event === 'PRODUCT_UPDATE') {
+    renderMenu();
+    if (activePage === 'page-home') showLiveNotif('🔄 Harga/Stok produk diperbarui!','warning');
+  }
+  if (event === 'ORDER_STATUS_UPDATE') {
+    if (activePage === 'page-success' && currentSuccessOrderId === msg.orderId) {
+      const order = DB.orders.find(o => o.id === msg.orderId);
+      if (order) {
+        updateTrackerFromOrder(order);
+        showLiveNotif(`📦 Status pesanan Anda: ${statusLabel(msg.newStatus)}`, 'success');
+      }
+    }
+    if (activePage === 'page-track') {
+      const inp = document.getElementById('track-input');
+      if (inp && inp.value === msg.orderId) trackOrder();
+    }
+  }
+  if (activePage === 'page-admin') {
+    const sec = document.querySelector('.admin-section.active')?.id;
+    if (event === 'NEW_ORDER') {
+      showLiveNotif(`🔔 Pesanan baru masuk! ${msg.orderName}`, 'success');
+      if (sec === 'admin-dashboard') renderDashboard();
+      if (sec === 'admin-orders')   renderAllOrders();
+    }
+    if (event === 'PRODUCT_UPDATE') {
+      if (sec === 'admin-products') renderProducts();
+    }
+    updatePendingBadge();
+  }
+}
+
+// ===================== GPS & ROUTING =====================
+// Koordinat RESMI Gedung 77 Ilmu Komputer UNIMED
+// Sumber: https://maps.app.goo.gl/mN3zBU8jhy3D9XkWA
+const BASE_LAT = 3.6066002;
+const BASE_LNG = 98.7142641;
+const GPS_RATE_PER_KM = 3000; // Rp 3.000 per km
+
+let userGPS = null;
+let gpsDeliveryFee = 0;
+let selectedGPSTime = '09.00–10.00';
+let autoRoute = null;
+
+function haversineDistance(lat1, lon1, lat2, lon2) {
+  const R = 6371, toRad = v => v * Math.PI / 180;
+  const dLat = toRad(lat2 - lat1), dLon = toRad(lon2 - lon1);
+  const a = Math.sin(dLat/2)**2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon/2)**2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
+
+function getBestRoute(lat, lng) {
+  const straightKm = haversineDistance(BASE_LAT, BASE_LNG, lat, lng);
+  const motorKm  = parseFloat((straightKm * 1.25).toFixed(2));
+  const motorFee = Math.ceil(motorKm) * GPS_RATE_PER_KM;
+  const motorMin = Math.round(motorKm / (25/60));
+
+  return {
+    type: 'motor',
+    icon: '🏍️',
+    label: 'Bermotor (Tercepat)',
+    distKm: motorKm,
+    straightKm: parseFloat(straightKm.toFixed(2)),
+    fee: motorFee,
+    estMin: motorMin,
+    estTime: motorMin + ' menit',
+    mapMode: 'driving'
+  };
+}
+
+function detectGPS() {
+  const btn  = document.getElementById('gps-detect-btn');
+  const disp = document.getElementById('gps-status-display');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Mendeteksi...';
+  disp.innerHTML = '<div class="gps-status">📡 Meminta izin lokasi perangkat Anda...</div>';
+
+  if (!navigator.geolocation) {
+    disp.innerHTML = '<div class="gps-status" style="color:var(--red)">❌ Browser tidak mendukung GPS. Coba browser lain.</div>';
+    btn.disabled = false; btn.textContent = '📍 Coba Lagi'; return;
+  }
+
+  navigator.geolocation.getCurrentPosition(
+    pos => {
+      const {latitude: lat, longitude: lng} = pos.coords;
+      userGPS = {lat, lng};
+
+      const route = getBestRoute(lat, lng);
+      autoRoute = route;
+      gpsDeliveryFee = route.fee;
+
+      disp.innerHTML = `
+        <div style="font-family:monospace;font-size:.85rem;color:#0652dd;background:rgba(6,82,221,.1);padding:6px 10px;border-radius:8px;margin:.5rem 0">
+          📍 ${lat.toFixed(6)}, ${lng.toFixed(6)}
+        </div>
+        <div class="gps-status" style="color:#155724">✅ Lokasi terdeteksi! Jarak dari Gedung 77 UNIMED: ±${route.straightKm} km</div>`;
+
+      btn.disabled = false;
+      btn.innerHTML = '🔄 Perbarui Lokasi';
+
+      showAutoRouteResult(lat, lng, route);
+      updateFinalSummary();
+      showToast(`✅ Lokasi terdeteksi — Ongkir: Rp ${route.fee.toLocaleString('id')}`);
+    },
+    err => {
+      let msg = 'Tidak dapat mendeteksi lokasi.';
+      if (err.code === 1) msg = 'Izin lokasi ditolak. Aktifkan izin lokasi di browser.';
+      else if (err.code === 2) msg = 'Sinyal GPS lemah. Coba di tempat terbuka.';
+      else if (err.code === 3) msg = 'Waktu habis. Coba lagi.';
+      disp.innerHTML = `<div class="gps-status" style="color:var(--red)">❌ ${msg}</div>`;
+      btn.disabled = false; btn.textContent = '📍 Coba Lagi';
+    },
+    {enableHighAccuracy: true, timeout: 15000, maximumAge: 0}
+  );
+}
+
+function showAutoRouteResult(lat, lng, route) {
+  const resultEl = document.getElementById('gps-delivery-result');
+  const contentEl = document.getElementById('gps-delivery-content');
+  const mapsUrl = `https://www.google.com/maps/dir/${BASE_LAT},${BASE_LNG}/${lat},${lng}/@${(BASE_LAT+lat)/2},${(BASE_LNG+lng)/2},15z/data=!4m2!4m1!3e0`;
+
+  contentEl.innerHTML = `
+    <div class="route-row"><span>Moda Pengantaran</span><span>${route.icon} ${route.label}</span></div>
+    <div class="route-row"><span>Dari</span><span>📍 Gedung 77 Ilmu Komputer UNIMED</span></div>
+    <div class="route-row"><span>Jarak Estimasi</span><span>~${route.distKm} km</span></div>
+    <div class="route-row"><span>Estimasi Waktu Tempuh</span><span>~${route.estTime}</span></div>
+    <div class="route-row"><span>Biaya Ongkir</span><span style="color:var(--orange);font-weight:700;font-size:1rem">Rp ${route.fee.toLocaleString('id')}</span></div>
+    <div style="margin-top:.8rem">
+      <a href="${mapsUrl}" target="_blank" class="maps-link" style="font-size:.8rem">
+        🗺️ Lihat Rute di Google Maps ↗
+      </a>
+    </div>`;
+
+  resultEl.classList.add('show');
+}
+
+function selectGPSTimeSlot(el, time) {
+  el.closest('.time-slots').querySelectorAll('.time-slot').forEach(x => x.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedGPSTime = time;
+}
+
+// ===================== STATE =====================
+let cart = [], wishlist = [], selectedProduct = null, modalQty = 1;
+let selectedBank = 'BNI', uploadedFile = null, uploadedDataURL = null;
+let deliveryMethod = 'pickup';
+let selectedPickupTime = '08.00–09.00';
+let paymentMode = 'transfer';
+let currentSuccessOrderId = null;
+let pollingInterval = null;
+
+// ===================== PAYMENT MODE =====================
+function selectPayMode(mode) {
+  paymentMode = mode;
+  document.getElementById('pay-mode-transfer').classList.toggle('selected', mode === 'transfer');
+  document.getElementById('pay-mode-cash').classList.toggle('selected', mode === 'cash');
+  document.getElementById('transfer-section').classList.toggle('open', mode === 'transfer');
+  document.getElementById('cash-section').classList.toggle('open', mode === 'cash');
+  document.getElementById('upload-section').style.display = mode === 'transfer' ? 'block' : 'none';
+  updateFinalSummary();
+}
+
+// ===================== LIVE NOTIFICATION =====================
+function showLiveNotif(msg, type = 'success') {
+  const c = document.getElementById('realtime-notif');
+  const d = document.createElement('div');
+  d.className = `rn-card ${type === 'warning' ? 'warning' : type === 'error' ? 'error' : ''}`;
+  d.innerHTML = `<div class="rn-title">${type === 'success' ? '✅' : '⚠️'} Update</div><div class="rn-msg">${msg}</div>`;
+  c.appendChild(d);
+  setTimeout(() => { d.style.opacity = '0'; d.style.transition = 'opacity .4s'; setTimeout(() => d.remove(), 400); }, 4000);
+}
+
+// ===================== NAV =====================
+function showPage(pid) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(pid).classList.add('active');
+  window.scrollTo(0, 0);
+  updateCounts();
+  if (pid === 'page-cart') renderCart();
+  if (pid === 'page-wishlist') renderWishlist();
+  if (pid === 'page-track') { document.getElementById('track-result').innerHTML = ''; }
+}
+
+function goHome() { showPage('page-home'); renderMenu(); }
+
+function goTrackPage() {
+  showPage('page-track');
+  if (currentSuccessOrderId) {
+    document.getElementById('track-input').value = currentSuccessOrderId;
+    trackOrder();
+  }
+}
+
+function updateCounts() {
+  const cc = cart.reduce((s, i) => s + i.qty, 0);
+  const wc = wishlist.reduce((s, i) => s + i.qty, 0);
+  document.querySelectorAll('#cart-count,#cart-count-2,#cart-count-track').forEach(el => el.textContent = cc);
+  document.querySelectorAll('#wishlist-count,#wishlist-count-2').forEach(el => el.textContent = wc);
+}
+
+function updatePendingBadge() {
+  const n = DB.orders.filter(o => o.status === 'pending').length;
+  const el = document.getElementById('pending-count-badge');
+  if (el) el.textContent = n;
+}
+
+function showToast(msg, type = 'green') {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className = `toast ${type} show`;
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+function copyOrderId() {
+  const id = document.getElementById('success-order-id').textContent;
+  navigator.clipboard.writeText(id).then(() => showToast('📋 ID Pesanan disalin!')).catch(() => showToast('ID: ' + id));
+}
+
+// ===================== TRACK ORDER =====================
+function trackOrder() {
+  const input = document.getElementById('track-input');
+  const resultEl = document.getElementById('track-result');
+  const id = (input?.value || '').trim().toUpperCase();
+
+  if (!id) { resultEl.innerHTML = '<div class="track-not-found" style="background:#fff;border-radius:14px;padding:2rem;text-align:center;color:var(--gray)">Masukkan ID Pesanan terlebih dahulu.</div>'; return; }
+
+  const order = DB.orders.find(o => o.id === id);
+  if (!order) {
+    resultEl.innerHTML = `
+      <div class="track-result">
+        <div class="track-not-found">
+          <div style="font-size:3rem;margin-bottom:.5rem">🔍</div>
+          <strong style="color:var(--dark)">Pesanan Tidak Ditemukan</strong>
+          <p style="margin-top:.5rem;font-size:.85rem">ID <strong>${id}</strong> tidak ditemukan. Periksa kembali ID pesanan Anda.</p>
+        </div>
+      </div>`;
+    return;
+  }
+
+  const curIdx = STATUS_STEPS.findIndex(s => s.key === order.status);
+  const stepsHtml = STATUS_STEPS.map((s, i) => {
+    const isDone   = i < curIdx || (order.status === s.key);
+    const isActive = s.key === order.status;
+    const hist     = order.statusHistory?.find(h => h.status === s.key);
+    const cls      = isActive ? 'active' : isDone ? 'done' : 'pending';
+    return `<div class="tracker-step">
+      <div class="step-dot ${cls} ${isActive ? 'pulse-ring' : ''}">${isDone && !isActive ? '✓' : isActive ? s.icon : i + 1}</div>
+      <div style="flex:1">
+        <div class="step-label">${s.icon} ${s.label}</div>
+        ${hist ? `<div style="font-size:.73rem;color:var(--gray)">${hist.date} ${hist.time}${hist.note ? ' — ' + hist.note : ''}</div>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+
+  let routeInfoHtml = '';
+  if (order.deliveryType === 'gps' && order.routeInfo) {
+    const r = order.routeInfo;
+    const mapsUrl = `https://www.google.com/maps/dir/${BASE_LAT},${BASE_LNG}/${order.gps.lat},${order.gps.lng}/@${(BASE_LAT+order.gps.lat)/2},${(BASE_LNG+order.gps.lng)/2},15z/data=!4m2!4m1!3e0`;
+    routeInfoHtml = `
+      <div class="gps-delivery-result show" style="margin-top:1rem">
+        <h5>🏍️ Rute Pengantaran</h5>
+        <div class="route-row"><span>Moda</span><span>${r.icon} ${r.label}</span></div>
+        <div class="route-row"><span>Dari</span><span>📍 Gedung 77 Ilmu Komputer UNIMED</span></div>
+        <div class="route-row"><span>Jarak</span><span>${r.distKm} km</span></div>
+        <div class="route-row"><span>Estimasi Waktu</span><span>~${r.estTime}</span></div>
+        <div class="route-row"><span>Biaya Ongkir</span><span>Rp ${order.ongkir.toLocaleString('id')}</span></div>
+        <div style="margin-top:.6rem">
+          <a href="${mapsUrl}" target="_blank" class="maps-link" style="font-size:.8rem">
+            🗺️ Lihat Rute di Google Maps ↗
+          </a>
+        </div>
+      </div>`;
+  }
+
+  let delivInfoHtml = '';
+  if (order.deliveryType === 'pickup') {
+    delivInfoHtml = `
+      <div style="font-size:.85rem;margin-top:1rem">
+        <div class="route-row"><span>📍 Titik Penjemputan</span><span>Gedung 77, Prodi Ilmu Komputer UNIMED</span></div>
+        <div class="route-row"><span>⏰ Waktu Jemput</span><span>${order.pickupTime}</span></div>
+        <div class="route-row"><span>💳 Pembayaran</span><span>${order.paymentMode === 'cash' ? '💵 Cash' : '🏦 Transfer ' + order.bank}</span></div>
+      </div>`;
+  } else {
+    delivInfoHtml = `
+      <div style="font-size:.85rem;margin-top:1rem">
+        <div class="route-row"><span>📍 Koordinat Tujuan</span><span>${order.gps?.lat.toFixed(5)}, ${order.gps?.lng.toFixed(5)}</span></div>
+        <div class="route-row"><span>⏰ Jam Antar</span><span>${order.deliveryTime}</span></div>
+        <div class="route-row"><span>💳 Pembayaran</span><span>${order.paymentMode === 'cash' ? '💵 Cash' : '🏦 Transfer ' + order.bank}</span></div>
+        ${order.deliveryDetail && order.deliveryDetail !== '—' ? `<div class="route-row"><span>📝 Keterangan</span><span>${order.deliveryDetail}</span></div>` : ''}
+      </div>
+      ${routeInfoHtml}`;
+  }
+
+  resultEl.innerHTML = `
+    <div class="track-result">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:.5rem">
+        <div>
+          <div style="font-size:.78rem;color:var(--gray)">ID Pesanan</div>
+          <div style="font-size:1.2rem;font-weight:700;font-family:monospace;color:var(--green)">${order.id}</div>
+        </div>
+        <div style="text-align:right">
+          ${statusBadge(order.status)}
+          <div style="font-size:.75rem;color:var(--gray);margin-top:4px">${order.date} ${order.time}</div>
+        </div>
+      </div>
+      <div style="background:var(--green-pale);border-radius:10px;padding:.8rem;margin-bottom:1rem;font-size:.85rem">
+        <div class="route-row"><span>Pemesan</span><span>${order.name}</span></div>
+        <div class="route-row"><span>Produk</span><span>${order.items?.map(i => i.emoji + ' ' + i.name + ' ×' + i.qty).join(', ') || '—'}</span></div>
+        <div class="route-row"><span>Total</span><span style="color:var(--green);font-weight:700">Rp ${(order.grandTotal || 0).toLocaleString('id')}</span></div>
+        <div class="route-row"><span>Tipe</span><span>${typeBadge(order.deliveryType)}</span></div>
+      </div>
+      <div class="order-tracker" style="box-shadow:none;padding:.5rem 0;border-top:2px solid var(--green-pale);margin-top:0">
+        <h4 style="margin-bottom:.8rem;font-size:.95rem">📊 Riwayat Status</h4>
+        <div class="tracker-steps">${stepsHtml}</div>
+      </div>
+      ${delivInfoHtml}
+      <button onclick="trackOrder()" style="background:var(--green);color:#fff;border:none;width:100%;padding:10px;border-radius:20px;font-family:'DM Sans';font-weight:600;cursor:pointer;margin-top:1rem;font-size:.9rem">🔄 Perbarui Status</button>
+    </div>`;
+
+  startTrackPolling(id);
+}
+
+let trackPollingInterval = null;
+function startTrackPolling(orderId) {
+  if (trackPollingInterval) clearInterval(trackPollingInterval);
+  trackPollingInterval = setInterval(() => {
+    const activePage = document.querySelector('.page.active')?.id;
+    if (activePage !== 'page-track') { clearInterval(trackPollingInterval); return; }
+    const inp = document.getElementById('track-input');
+    if (inp && inp.value.trim().toUpperCase() === orderId) {
+      const order = DB.orders.find(o => o.id === orderId);
+      if (order && (order.status === 'delivered' || order.status === 'cancelled')) {
+        clearInterval(trackPollingInterval);
+      }
+      updateTrackResult(orderId);
+    }
+  }, 3000);
+}
+
+function updateTrackResult(orderId) {
+  const order = DB.orders.find(o => o.id === orderId);
+  if (!order) return;
+  const curIdx = STATUS_STEPS.findIndex(s => s.key === order.status);
+  const stepsEl = document.querySelector('#track-result .tracker-steps');
+  if (!stepsEl) return;
+  stepsEl.innerHTML = STATUS_STEPS.map((s, i) => {
+    const isDone   = i < curIdx || (order.status === s.key);
+    const isActive = s.key === order.status;
+    const hist     = order.statusHistory?.find(h => h.status === s.key);
+    const cls      = isActive ? 'active' : isDone ? 'done' : 'pending';
+    return `<div class="tracker-step">
+      <div class="step-dot ${cls} ${isActive ? 'pulse-ring' : ''}">${isDone && !isActive ? '✓' : isActive ? s.icon : i + 1}</div>
+      <div style="flex:1">
+        <div class="step-label">${s.icon} ${s.label}</div>
+        ${hist ? `<div style="font-size:.73rem;color:var(--gray)">${hist.date} ${hist.time}${hist.note ? ' — ' + hist.note : ''}</div>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ===================== MENU =====================
+function renderMenu() {
+  const grid = document.getElementById('menu-grid');
+  if (!grid) return;
+  grid.innerHTML = DB.products.filter(p => p.active).map(p => {
+    const stockClass = p.stock === 0 ? 'stock-out' : p.stock < 10 ? 'stock-low' : 'stock-ok';
+    const stockText  = p.stock === 0 ? 'Habis' : `Stok: ${p.stock} cup`;
+    const isOut = p.stock === 0;
+    return `
+    <div class="product-card ${isOut ? 'out-of-stock' : ''}" onclick="${isOut ? '' : "openProduct('" + p.id + "')"}">
+      <div class="product-img ${p.gradient}">
+        ${p.emoji}
+        <div class="product-badge">${p.tag}</div>
+      </div>
+      <div class="product-body">
+        <h3 class="product-name">${p.name}</h3>
+        <p class="product-desc">${p.desc}</p>
+        <div class="product-stock-info"><span class="${stockClass}">${stockText}</span></div>
+        <div class="product-footer">
+          <div class="product-price">Rp ${p.price.toLocaleString('id')}<small>/cup</small></div>
+          <button class="add-btn" ${isOut ? 'disabled' : ''} onclick="event.stopPropagation();quickAdd('${p.id}')">+</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function quickAdd(id) {
+  const p = DB.products.find(x => x.id === id);
+  if (!p || p.stock === 0) { showToast('❌ Stok habis!', 'red'); return; }
+  addItem(cart, p, 1);
+  updateCounts();
+  showToast(`✅ ${p.name} ditambahkan ke keranjang!`);
+}
+
+// ===================== MODAL =====================
+function openProduct(id) {
+  selectedProduct = DB.products.find(p => p.id === id);
+  if (!selectedProduct) return;
+  modalQty = 1;
+  const isOut = selectedProduct.stock === 0;
+  document.getElementById('modal-img').className = 'modal-img ' + selectedProduct.gradient;
+  document.getElementById('modal-img').textContent = selectedProduct.emoji;
+  document.getElementById('modal-tag').textContent = selectedProduct.tag;
+  document.getElementById('modal-name').textContent = selectedProduct.name;
+  document.getElementById('modal-desc').textContent = selectedProduct.desc;
+  document.getElementById('modal-price').textContent = `Rp ${selectedProduct.price.toLocaleString('id')} / cup`;
+  const sc = selectedProduct.stock;
+  document.getElementById('modal-stock').innerHTML =
+    sc === 0 ? '<span class="stock-out">⚠️ Stok Habis</span>'
+             : sc < 10 ? `<span class="stock-low">⚠️ Stok Terbatas: ${sc} cup</span>`
+                       : `<span class="stock-ok">✅ Stok: ${sc} cup</span>`;
+  document.getElementById('modal-qty').textContent = 1;
+  const btn = document.getElementById('modal-add-btn');
+  btn.disabled = isOut; btn.textContent = isOut ? '⛔ Stok Habis' : '🛍️ Tambah ke Keranjang';
+  document.getElementById('product-modal').classList.add('open');
+}
+
+function closeModal() { document.getElementById('product-modal').classList.remove('open'); }
+document.getElementById('product-modal').addEventListener('click', function(e) { if (e.target === this) closeModal(); });
+
+function changeQty(d) {
+  const max = selectedProduct ? selectedProduct.stock : 99;
+  modalQty = Math.max(1, Math.min(max, modalQty + d));
+  document.getElementById('modal-qty').textContent = modalQty;
+}
+
+function addToCart() {
+  if (!selectedProduct || selectedProduct.stock === 0) return;
+  addItem(cart, selectedProduct, modalQty);
+  updateCounts();
+  showToast(`🛍️ ${selectedProduct.name} x${modalQty} ditambahkan!`);
+  closeModal();
+}
+
+function addToWishlist() {
+  addItem(wishlist, selectedProduct, modalQty);
+  updateCounts();
+  showToast('🛒 Disimpan ke Keranjang Kuning!', 'orange');
+  closeModal();
+}
+
+function addItem(arr, product, qty) {
+  const ex = arr.find(i => i.id === product.id);
+  if (ex) ex.qty += qty;
+  else arr.push({id: product.id, name: product.name, emoji: product.emoji, price: product.price, qty});
+}
+
+// ===================== CART =====================
+function renderCart() {
+  const el  = document.getElementById('cart-items');
+  const sum = document.getElementById('cart-summary-section');
+  if (!cart.length) {
+    el.innerHTML = `<div class="empty-cart"><div class="big-emoji">🛍️</div><h3>Keranjang Kosong</h3><p>Belum ada item.</p><br><button class="checkout-btn-big" style="max-width:200px" onclick="goHome()">Lihat Menu</button></div>`;
+    sum.innerHTML = ''; return;
+  }
+  el.innerHTML = cart.map(item => `
+    <div class="cart-item">
+      <div class="cart-item-emoji">${item.emoji}</div>
+      <div class="cart-item-info">
+        <div class="cart-item-name">${item.name}</div>
+        <div class="cart-item-price">Rp ${(item.price * item.qty).toLocaleString('id')}</div>
+      </div>
+      <div class="cart-item-controls">
+        <button class="ci-qty-btn" onclick="changeCartQty('${item.id}',-1)">−</button>
+        <span style="font-weight:700">${item.qty}</span>
+        <button class="ci-qty-btn" onclick="changeCartQty('${item.id}',1)">+</button>
+        <button class="remove-btn" onclick="removeCart('${item.id}')">✕</button>
+      </div>
+    </div>`).join('');
+
+  const total    = cart.reduce((s, i) => s + i.price * i.qty, 0);
+  const totalQty = cart.reduce((s, i) => s + i.qty, 0);
+
+  sum.innerHTML = `
+    <div class="cart-summary">
+      <div class="summary-row"><span>Subtotal (${totalQty} item)</span><span>Rp ${total.toLocaleString('id')}</span></div>
+      <div class="summary-row total"><span>Estimasi Total</span><span>Rp ${total.toLocaleString('id')}+</span></div>
+      <button class="checkout-btn-big" onclick="goCheckout()">Lanjut ke Checkout →</button>
+    </div>`;
+}
+
+function changeCartQty(id, d) {
+  const item = cart.find(i => i.id === id);
+  if (item) { item.qty += d; if (item.qty <= 0) cart = cart.filter(i => i.id !== id); }
+  updateCounts(); renderCart();
+}
+function removeCart(id) { cart = cart.filter(i => i.id !== id); updateCounts(); renderCart(); }
+
+// ===================== WISHLIST =====================
+function renderWishlist() {
+  const el = document.getElementById('wishlist-items');
+  if (!wishlist.length) {
+    el.innerHTML = `<div class="empty-cart"><div class="big-emoji">🛒</div><h3>Keranjang Kuning Kosong</h3></div>`; return;
+  }
+  el.innerHTML = wishlist.map(item => `
+    <div class="cart-item">
+      <div class="cart-item-emoji">${item.emoji}</div>
+      <div class="cart-item-info">
+        <div class="cart-item-name">${item.name}</div>
+        <div class="cart-item-price">Rp ${(item.price * item.qty).toLocaleString('id')}</div>
+      </div>
+      <div class="cart-item-controls">
+        <button class="ci-qty-btn" onclick="changeWishQty('${item.id}',-1)">−</button>
+        <span style="font-weight:700">${item.qty}</span>
+        <button class="ci-qty-btn" onclick="changeWishQty('${item.id}',1)">+</button>
+        <button class="remove-btn" onclick="removeWish('${item.id}')">✕</button>
+      </div>
+    </div>`).join('') +
+    `<div style="margin-top:1rem"><button class="checkout-btn-big" onclick="moveWishToCart()">🛍️ Pindahkan ke Keranjang</button></div>`;
+}
+
+function changeWishQty(id, d) {
+  const item = wishlist.find(i => i.id === id);
+  if (item) { item.qty += d; if (item.qty <= 0) wishlist = wishlist.filter(i => i.id !== id); }
+  updateCounts(); renderWishlist();
+}
+function removeWish(id) { wishlist = wishlist.filter(i => i.id !== id); updateCounts(); renderWishlist(); }
+function moveWishToCart() {
+  wishlist.forEach(item => addItem(cart, item, item.qty));
+  wishlist = []; updateCounts(); showPage('page-cart');
+  showToast('🛍️ Semua item dipindahkan ke keranjang!');
+}
+
+// ===================== DELIVERY =====================
+function selectDelivery(method) {
+  deliveryMethod = method;
+  ['pickup', 'gps'].forEach(m => {
+    document.getElementById(`opt-${m}`).classList.toggle('selected', m === method);
+    document.getElementById(`section-${m}`).classList.toggle('open', m === method);
+  });
+  updateFinalSummary();
+}
+
+function selectTimeSlot(el, time) {
+  el.closest('.time-slots').querySelectorAll('.time-slot').forEach(x => x.classList.remove('selected'));
+  el.classList.add('selected'); selectedPickupTime = time;
+}
+
+function getOngkir() {
+  if (deliveryMethod === 'pickup') return 0;
+  if (deliveryMethod === 'gps') return gpsDeliveryFee;
+  return 0;
+}
+
+function updateFinalSummary() {
+  const sub    = cart.reduce((s, i) => s + i.price * i.qty, 0);
+  const ongkir = getOngkir();
+  const el = document.getElementById('final-summary');
+  if (!el) return;
+
+  let ongkirLabel = 'Gratis';
+  if (deliveryMethod === 'gps') {
+    if (!userGPS) ongkirLabel = 'Belum terdeteksi GPS';
+    else if (!autoRoute) ongkirLabel = 'Menghitung rute...';
+    else ongkirLabel = `Rp ${ongkir.toLocaleString('id')} (${autoRoute.icon} ${autoRoute.label}, ~${autoRoute.distKm} km)`;
+  }
+  const payLabel = paymentMode === 'cash' ? '💵 Bayar di Tempat (Cash)' : `🏦 Transfer Bank (${selectedBank})`;
+  el.innerHTML = `
+    <div class="order-review-item"><span>Subtotal produk</span><span>Rp ${sub.toLocaleString('id')}</span></div>
+    <div class="order-review-item"><span>Ongkos Kirim</span><span>${ongkirLabel}</span></div>
+    <div class="order-review-item"><span>Metode Bayar</span><span>${payLabel}</span></div>
+    <div class="order-review-total"><span>Total Pembayaran</span><span>Rp ${(sub + ongkir).toLocaleString('id')}</span></div>`;
+}
+
+// ===================== CHECKOUT =====================
+function goCheckout() {
+  if (!cart.length) { showToast('❌ Keranjang masih kosong!', 'orange'); return; }
+  for (const item of cart) {
+    const prod = DB.products.find(p => p.id === item.id);
+    if (!prod || prod.stock < item.qty) {
+      showToast(`❌ Stok ${item.name} tidak mencukupi! Tersisa ${prod?.stock || 0} cup.`, 'red'); return;
+    }
+  }
+  renderCheckoutPage();
+  showPage('page-checkout');
+}
+
+function renderCheckoutPage() {
+  const sub = cart.reduce((s, i) => s + i.price * i.qty, 0);
+  document.getElementById('checkout-order-review').innerHTML =
+    cart.map(i => `<div class="order-review-item"><span>${i.emoji} ${i.name} x${i.qty}</span><span>Rp ${(i.price * i.qty).toLocaleString('id')}</span></div>`).join('') +
+    `<div class="order-review-total" style="border:none;padding-top:0"><span>Subtotal</span><span>Rp ${sub.toLocaleString('id')}</span></div>`;
+
+  ['pickup', 'gps'].forEach(m => {
+    document.getElementById(`opt-${m}`).classList.toggle('selected', m === deliveryMethod);
+    document.getElementById(`section-${m}`).classList.toggle('open', m === deliveryMethod);
+  });
+
+  document.getElementById('upload-section').style.display = paymentMode === 'transfer' ? 'block' : 'none';
+  updateFinalSummary();
+}
+
+function selectBank(el, bank) {
+  document.querySelectorAll('#transfer-section .payment-option').forEach(x => x.classList.remove('selected'));
+  el.classList.add('selected'); selectedBank = bank;
+  updateFinalSummary();
+}
+
+function handleFileUpload(input) {
+  if (input.files[0]) {
+    uploadedFile = input.files[0];
+    document.getElementById('upload-filename').textContent = uploadedFile.name;
+    document.getElementById('upload-preview').style.display = 'block';
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      uploadedDataURL = e.target.result;
+      document.getElementById('upload-img-tag').src = uploadedDataURL;
+      document.getElementById('upload-img-preview').style.display = 'block';
+    };
+    reader.readAsDataURL(uploadedFile);
+  }
+}
+
+// ===================== SUBMIT ORDER =====================
+function submitOrder() {
+  const name  = document.getElementById('input-name').value.trim();
+  const phone = document.getElementById('input-phone').value.trim();
+  if (!name || !phone) { showToast('❌ Nama dan nomor WA wajib diisi!', 'orange'); return; }
+  if (paymentMode === 'transfer' && !uploadedFile) { showToast('❌ Upload bukti transfer terlebih dahulu!', 'orange'); return; }
+  if (deliveryMethod === 'gps' && !userGPS) { showToast('❌ Deteksi lokasi GPS terlebih dahulu!', 'orange'); return; }
+  if (deliveryMethod === 'gps' && !autoRoute) { showToast('❌ Rute pengantaran belum tersedia.', 'orange'); return; }
+
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Memproses...';
+
+  cart.forEach(item => {
+    const prod = DB.products.find(p => p.id === item.id);
+    if (prod) prod.stock = Math.max(0, prod.stock - item.qty);
+  });
+
+  const now      = new Date();
+  const dateStr  = now.toISOString().split('T')[0];
+  const timeStr  = now.toTimeString().slice(0, 5);
+  const orderId  = 'FJ-' + Date.now().toString().slice(-6);
+  const sub      = cart.reduce((s, i) => s + i.price * i.qty, 0);
+  const ongkir   = getOngkir();
+  const grandTotal = sub + ongkir;
+  const notes    = document.getElementById('input-notes').value;
+  const gpsDetail = deliveryMethod === 'gps' ? document.getElementById('input-gps-detail').value : '';
+  const delivTime = deliveryMethod === 'gps' ? selectedGPSTime : selectedPickupTime;
+
+  const newOrder = {
+    id: orderId, name, phone, notes,
+    items: cart.map(i => ({...i})),
+    sub, ongkir, grandTotal,
+    bank: paymentMode === 'transfer' ? selectedBank : '—',
+    paymentMode,
+    proofDataURL: paymentMode === 'transfer' ? uploadedDataURL : null,
+    status: 'pending',
+    date: dateStr, time: timeStr,
+    deliveryType: deliveryMethod,
+    pickupPoint: 'Gedung 77 — Prodi Ilmu Komputer UNIMED',
+    pickupTime:  deliveryMethod === 'pickup' ? selectedPickupTime : '—',
+    deliveryDetail: deliveryMethod === 'gps' ? (gpsDetail || '—') : '—',
+    deliveryTime: delivTime,
+    gps:         deliveryMethod === 'gps' ? {...userGPS} : null,
+    gpsDistance: deliveryMethod === 'gps' && userGPS ? parseFloat(haversineDistance(BASE_LAT, BASE_LNG, userGPS.lat, userGPS.lng).toFixed(2)) : 0,
+    routeInfo:   deliveryMethod === 'gps' ? {...autoRoute} : null,
+    statusHistory: [{status: 'pending', time: timeStr, date: dateStr, note: 'Pesanan masuk, menunggu verifikasi pembayaran'}]
+  };
+
+  DB.orders.unshift(newOrder);
+  broadcast('NEW_ORDER', {orderName: `${name} - Rp ${grandTotal.toLocaleString('id')}`});
+
+  currentSuccessOrderId = orderId;
+  renderSuccessPage(newOrder);
+  startOrderPolling(orderId);
+
+  if (paymentMode === 'cash') {
+    document.getElementById('success-msg-text').textContent = 'Terima kasih sudah memesan di FreshJus! Pesanan Anda akan segera diproses. Siapkan pembayaran cash saat mengambil / menerima pesanan.';
+  } else {
+    document.getElementById('success-msg-text').textContent = 'Terima kasih sudah memesan di FreshJus. Bukti transfer Anda sedang diverifikasi dan jus segar segera disiapkan!';
+  }
+
+  cart = []; uploadedFile = null; uploadedDataURL = null;
+  deliveryMethod = 'pickup'; paymentMode = 'transfer';
+  userGPS = null; autoRoute = null; gpsDeliveryFee = 0;
+  updateCounts();
+
+  setTimeout(() => {
+    btn.disabled = false; btn.textContent = '🚀 Kirim Pesanan';
+    showPage('page-success');
+  }, 500);
+
+  renderMenu();
+  updatePendingBadge();
+}
+
+// ===================== SUCCESS PAGE =====================
+const STATUS_STEPS = [
+  {key: 'pending',    label: 'Pesanan Diterima',             icon: '📥'},
+  {key: 'verified',   label: 'Pembayaran Diverifikasi',      icon: '✅'},
+  {key: 'processing', label: 'Jus Sedang Dibuat',            icon: '🥤'},
+  {key: 'ready',      label: 'Siap Diambil / Dikirim',       icon: '📦'},
+  {key: 'delivered',  label: 'Selesai',                      icon: '🎉'}
+];
+
+function renderSuccessPage(order) {
+  document.getElementById('success-order-id').textContent = order.id;
+  updateTrackerFromOrder(order);
+
+  const infoEl = document.getElementById('success-delivery-info');
+  if (order.deliveryType === 'pickup') {
+    infoEl.innerHTML = `<h4>🏃 Ambil Sendiri</h4>
+      <div class="success-delivery-row"><span>Titik Penjemputan:</span><span>Gedung 77, Prodi Ilmu Komputer UNIMED</span></div>
+      <div class="success-delivery-row"><span>Jam Penjemputan:</span><span>${order.pickupTime}</span></div>
+      <div class="success-delivery-row"><span>Pembayaran:</span><span>${order.paymentMode === 'cash' ? '💵 Cash di tempat' : '🏦 Transfer ' + order.bank}</span></div>
+      <div class="success-delivery-row"><span>Info:</span><span>Tunjukkan ID Pesanan saat mengambil.</span></div>`;
+  } else {
+    const route = order.routeInfo;
+    const mapsUrl = `https://www.google.com/maps/dir/${BASE_LAT},${BASE_LNG}/${order.gps?.lat},${order.gps?.lng}/@${(BASE_LAT+(order.gps?.lat||0))/2},${(BASE_LNG+(order.gps?.lng||0))/2},15z/data=!4m2!4m1!3e0`;
+    infoEl.innerHTML = `<h4>📍 Antar ke Lokasi Anda</h4>
+      <div class="success-delivery-row"><span>Koordinat:</span><span>${order.gps?.lat.toFixed(5)}, ${order.gps?.lng.toFixed(5)}</span></div>
+      <div class="success-delivery-row"><span>Rute Pengantaran:</span><span>${route?.icon} ${route?.label}</span></div>
+      <div class="success-delivery-row"><span>Jarak Rute:</span><span>~${route?.distKm} km (±${route?.estTime})</span></div>
+      <div class="success-delivery-row"><span>Ongkos Kirim:</span><span>Rp ${order.ongkir.toLocaleString('id')}</span></div>
+      <div class="success-delivery-row"><span>Jam Pengantaran:</span><span>${order.deliveryTime}</span></div>
+      <div class="success-delivery-row"><span>Pembayaran:</span><span>${order.paymentMode === 'cash' ? '💵 Cash saat diterima' : '🏦 Transfer ' + order.bank}</span></div>
+      ${order.deliveryDetail && order.deliveryDetail !== '—' ? `<div class="success-delivery-row"><span>Keterangan:</span><span>${order.deliveryDetail}</span></div>` : ''}
+      <div style="margin-top:.8rem">
+        <a href="${mapsUrl}" target="_blank" class="maps-link">🗺️ Lihat Rute di Google Maps ↗</a>
+      </div>`;
+  }
+}
+
+function updateTrackerFromOrder(order) {
+  const steps = document.getElementById('tracker-steps');
+  if (!steps) return;
+  const curIdx = STATUS_STEPS.findIndex(s => s.key === order.status);
+  steps.innerHTML = STATUS_STEPS.map((s, i) => {
+    const isDone   = i < curIdx || (order.status === s.key);
+    const isActive = s.key === order.status;
+    const hist     = order.statusHistory?.find(h => h.status === s.key);
+    const cls      = isActive ? 'active' : isDone ? 'done' : 'pending';
+    return `<div class="tracker-step">
+      <div class="step-dot ${cls} ${isActive ? 'pulse-ring' : ''}">${isDone && !isActive ? '✓' : isActive ? s.icon : i + 1}</div>
+      <div style="flex:1">
+        <div class="step-label">${s.icon} ${s.label}</div>
+        ${hist ? `<div style="font-size:.73rem;color:var(--gray)">${hist.date} ${hist.time}${hist.note ? ' — ' + hist.note : ''}</div>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function startOrderPolling(orderId) {
+  if (pollingInterval) clearInterval(pollingInterval);
+  pollingInterval = setInterval(() => {
+    const order = DB.orders.find(o => o.id === orderId);
+    if (order) {
+      updateTrackerFromOrder(order);
+      if (order.status === 'delivered' || order.status === 'cancelled') clearInterval(pollingInterval);
+    }
+  }, 2000);
+}
+
+// ===================== ADMIN AUTH =====================
+function adminLogin() {
+  const u = document.getElementById('admin-user').value;
+  const p = document.getElementById('admin-pass').value;
+  if (u === 'admin' && p === 'freshjus123') {
+    document.getElementById('login-error').style.display = 'none';
+    showPage('page-admin');
+    adminNav('dashboard');
+  } else {
+    document.getElementById('login-error').style.display = 'block';
+  }
+}
+
+function adminLogout() { goHome(); }
+
+// ===================== ADMIN NAV =====================
+function adminNav(section) {
+  document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.sidebar-nav li a').forEach(a => a.classList.remove('active'));
+  document.getElementById('admin-' + section).classList.add('active');
+  document.getElementById('nav-' + section).classList.add('active');
+  const titles = {dashboard: 'Dashboard', orders: 'Semua Pesanan', products: 'Manajemen Produk & Stok', reports: 'Laporan'};
+  document.getElementById('admin-page-title').textContent = titles[section];
+  if (section === 'dashboard') renderDashboard();
+  if (section === 'orders')    renderAllOrders();
+  if (section === 'products')  renderProducts();
+  if (section === 'reports')   renderReports();
+}
+
+// ===================== ADMIN DASHBOARD =====================
+function renderDashboard() {
+  const orders    = DB.orders;
+  const completed = orders.filter(o => o.status === 'delivered');
+  const pending   = orders.filter(o => o.status === 'pending').length;
+  const cancelled = orders.filter(o => o.status === 'cancelled').length;
+  const totalRev  = completed.reduce((s, o) => s + (o.grandTotal || 0), 0);
+  const gpsCount  = completed.filter(o => o.deliveryType === 'gps').length;
+
+  document.getElementById('stats-grid').innerHTML = `
+    <div class="stat-card green">
+      <div class="stat-label">Pendapatan (Selesai)</div>
+      <div class="stat-value">Rp ${(totalRev / 1000).toFixed(0)}K</div>
+      <div class="stat-sub">Dari ${completed.length} pesanan selesai</div>
+      <div class="stat-emoji">💰</div>
+    </div>
+    <div class="stat-card orange">
+      <div class="stat-label">Total Pesanan Masuk</div>
+      <div class="stat-value">${orders.length}</div>
+      <div class="stat-sub">${pending} menunggu verifikasi</div>
+      <div class="stat-emoji">📦</div>
+    </div>
+    <div class="stat-card yellow">
+      <div class="stat-label">Antar GPS (Selesai)</div>
+      <div class="stat-value">${gpsCount}</div>
+      <div class="stat-sub">Pesanan diantar ke lokasi</div>
+      <div class="stat-emoji">📍</div>
+    </div>
+    <div class="stat-card blue">
+      <div class="stat-label">Dibatalkan</div>
+      <div class="stat-value">${cancelled}</div>
+      <div class="stat-sub">Tidak dihitung di pendapatan</div>
+      <div class="stat-emoji">✕</div>
+    </div>`;
+
+  const counts = {dragon: 0, mango: 0, cucumber: 0};
+  completed.forEach(o => o.items?.forEach(i => { if (counts[i.id] !== undefined) counts[i.id] += i.qty; }));
+  const maxC   = Math.max(...Object.values(counts), 1);
+  const colors = {dragon: '#ee0979', mango: '#f7971e', cucumber: '#56ab2f'};
+  const labels = {dragon: '🐉 Naga', mango: '🥭 Mangga', cucumber: '🥒 Timun'};
+
+  document.getElementById('bar-chart').innerHTML = Object.entries(counts).map(([k, v]) => `
+    <div class="bar-item">
+      <div class="bar-val" style="color:${colors[k]}">${v}</div>
+      <div class="bar" style="height:${Math.max(8, v / maxC * 100)}px;background:${colors[k]}"></div>
+      <div class="bar-label">${labels[k]}</div>
+    </div>`).join('');
+
+  const revenues = {dragon: 0, mango: 0, cucumber: 0};
+  completed.forEach(o => o.items?.forEach(i => { if (revenues[i.id] !== undefined) revenues[i.id] += i.price * i.qty; }));
+  const totalRevP = Object.values(revenues).reduce((a, b) => a + b, 1);
+  document.getElementById('pie-legend').innerHTML = Object.entries(revenues).map(([k, v]) => `
+    <div class="pie-row">
+      <div class="pie-dot" style="background:${colors[k]}"></div>
+      <span style="flex:0 0 80px;font-size:.8rem">${labels[k]}</span>
+      <div class="pie-bar-track"><div class="pie-bar-fill" style="width:${(v / totalRevP * 100).toFixed(0)}%;background:${colors[k]}"></div></div>
+      <span style="font-size:.8rem;font-weight:700;margin-left:8px">${(v / totalRevP * 100).toFixed(0)}%</span>
+    </div>`).join('');
+
+  document.getElementById('recent-orders-tbody').innerHTML = orders.slice(0, 6).map(o => `
+    <tr>
+      <td><strong style="cursor:pointer;color:var(--green);text-decoration:underline" onclick="openOrderDetail('${o.id}')">${o.id}</strong></td>
+      <td>${o.name}</td>
+      <td style="font-size:.8rem">${o.items?.map(i => i.emoji + ' x' + i.qty).join(', ') || '—'}</td>
+      <td>Rp ${(o.grandTotal || 0).toLocaleString('id')}</td>
+      <td>${paymentBadge(o)}</td>
+      <td>${statusBadge(o.status)}</td>
+      <td>${actionButtons(o)}</td>
+    </tr>`).join('');
+
+  updatePendingBadge();
+}
+
+// ===================== ADMIN ORDERS =====================
+function renderAllOrders() {
+  const q  = (document.getElementById('search-orders')?.value || '').toLowerCase();
+  const fs = document.getElementById('filter-status')?.value || '';
+  const ft = document.getElementById('filter-type')?.value || '';
+  const filtered = DB.orders.filter(o => {
+    const matchQ = !q || (o.id + o.name + o.phone + (o.items?.map(i => i.name).join('') || '') + o.status).toLowerCase().includes(q);
+    const matchS = !fs || o.status === fs;
+    const matchT = !ft || o.deliveryType === ft;
+    return matchQ && matchS && matchT;
+  });
+
+  document.getElementById('all-orders-tbody').innerHTML = filtered.map(o => `
+    <tr>
+      <td><strong style="cursor:pointer;color:var(--green);text-decoration:underline" onclick="openOrderDetail('${o.id}')">${o.id}</strong></td>
+      <td>${o.name}</td>
+      <td style="font-size:.8rem">${o.phone}</td>
+      <td style="font-size:.8rem">${o.items?.map(i => i.emoji + ' ' + i.name + ' x' + i.qty).join('<br>') || '—'}</td>
+      <td><strong>Rp ${(o.grandTotal || 0).toLocaleString('id')}</strong></td>
+      <td>${paymentBadge(o)}</td>
+      <td style="text-align:center">${proofThumb(o)}</td>
+      <td style="font-size:.78rem;max-width:180px">
+        ${o.deliveryType === 'pickup'
+          ? `📍 Gedung 77, Prodi Ilkom UNIMED<br><span style="color:var(--gray)">⏰ ${o.pickupTime}</span>`
+          : `📍 GPS: ${o.gps?.lat.toFixed(4)},${o.gps?.lng.toFixed(4)}<br>
+             <span style="color:var(--green);font-weight:600">${o.routeInfo?.icon || '🏍️'} ${o.routeInfo?.label || 'Bermotor'} · ${o.routeInfo?.distKm || o.gpsDistance}km</span><br>
+             <span style="color:var(--orange)">Rp ${o.ongkir?.toLocaleString('id')}</span><br>
+             <a href="https://www.google.com/maps/dir/${BASE_LAT},${BASE_LNG}/${o.gps?.lat},${o.gps?.lng}/@${(BASE_LAT + (o.gps?.lat || 0)) / 2},${(BASE_LNG + (o.gps?.lng || 0)) / 2},15z/data=!4m2!4m1!3e0" target="_blank" class="maps-link" style="margin-top:4px;display:inline-flex;font-size:.72rem;padding:4px 10px">🗺️ Buka Maps</a>`}
+      </td>
+      <td>${statusBadge(o.status)}</td>
+      <td style="font-size:.75rem;color:var(--gray)">${o.date}<br>${o.time}</td>
+      <td>${actionButtons(o)}</td>
+    </tr>`).join('');
+}
+
+function filterOrders() { renderAllOrders(); }
+
+// ===================== BUKTI PEMBAYARAN =====================
+function proofThumb(o) {
+  if (o.paymentMode === 'cash') return `<span class="proof-cash-badge">💵 Cash</span>`;
+  if (o.proofDataURL) return `<img src="${o.proofDataURL}" class="admin-proof-thumb" onclick="openProofModal('${o.id}')" title="Klik untuk lihat bukti transfer">`;
+  return `<span style="font-size:.75rem;color:var(--gray)">—</span>`;
+}
+
+function openProofModal(orderId) {
+  const o = DB.orders.find(x => x.id === orderId);
+  if (!o) return;
+  document.getElementById('proof-order-id').textContent = o.id;
+  document.getElementById('proof-payment-info').innerHTML = o.paymentMode === 'cash'
+    ? `<div class="proof-payment-type cash">💵 Pembayaran Cash — Verifikasi saat pengambilan/pengantaran</div>`
+    : `<div class="proof-payment-type transfer">🏦 Transfer ke Bank ${o.bank} — a.n. FreshJus</div>`;
+
+  const cont = document.getElementById('proof-img-container');
+  if (o.proofDataURL) {
+    cont.innerHTML = `<img src="${o.proofDataURL}" alt="Bukti Transfer ${o.id}" style="max-width:100%;max-height:60vh;object-fit:contain;display:block">`;
+  } else {
+    cont.innerHTML = `<div class="proof-no-img"><div class="no-img-icon">🖼️</div><div>Tidak ada bukti transfer yang diunggah</div></div>`;
+  }
+
+  const acts = STATUS_ACTIONS[o.status] || [];
+  document.getElementById('proof-modal-actions').innerHTML =
+    acts.map(a => `<button class="action-btn ${a.cls}" onclick="updateOrderStatus('${o.id}','${a.to}','${a.note}');closeProofModal()">${a.label}</button>`).join('') +
+    ((['pending', 'verified', 'processing'].includes(o.status))
+      ? `<button class="action-btn btn-cancel" onclick="updateOrderStatus('${o.id}','cancelled','Dibatalkan admin');closeProofModal()">✕ Batalkan Pesanan</button>`
+      : '');
+
+  document.getElementById('proof-modal-overlay').classList.add('open');
+}
+
+function closeProofModal() { document.getElementById('proof-modal-overlay').classList.remove('open'); }
+
+// ===================== ORDER DETAIL MODAL =====================
+function openOrderDetail(orderId) {
+  const o = DB.orders.find(x => x.id === orderId);
+  if (!o) return;
+  document.getElementById('odm-title').textContent = 'Detail Pesanan ' + o.id;
+
+  let locationHtml = '';
+  if (o.deliveryType === 'gps' && o.gps) {
+    const route = o.routeInfo;
+    const mapsUrl = `https://www.google.com/maps/dir/${BASE_LAT},${BASE_LNG}/${o.gps.lat},${o.gps.lng}/@${(BASE_LAT+o.gps.lat)/2},${(BASE_LNG+o.gps.lng)/2},15z/data=!4m2!4m1!3e0`;
+    locationHtml = `
+      <div class="odm-row"><span class="odm-label">Koordinat GPS</span><span class="odm-value">${o.gps.lat.toFixed(6)}, ${o.gps.lng.toFixed(6)}</span></div>
+      <div class="odm-row"><span class="odm-label">Rute Pengantaran</span><span class="odm-value">${route?.icon || '🏍️'} ${route?.label || 'Bermotor (Tercepat)'}</span></div>
+      <div class="odm-row"><span class="odm-label">Jarak Rute</span><span class="odm-value">~${route?.distKm || o.gpsDistance} km</span></div>
+      <div class="odm-row"><span class="odm-label">Est. Waktu Tempuh</span><span class="odm-value">~${route?.estTime || '—'}</span></div>
+      <div class="odm-row"><span class="odm-label">Jam Antar</span><span class="odm-value">⏰ ${o.deliveryTime}</span></div>
+      <div class="odm-row"><span class="odm-label">Keterangan</span><span class="odm-value">${o.deliveryDetail || '—'}</span></div>
+      <div class="odm-row">
+        <span class="odm-label">Navigasi</span>
+        <span class="odm-value">
+          <a href="${mapsUrl}" target="_blank" class="maps-link">🗺️ Buka Google Maps ↗</a>
+        </span>
+      </div>`;
+  } else {
+    locationHtml = `
+      <div class="odm-row"><span class="odm-label">Titik Penjemputan</span><span class="odm-value">📍 Gedung 77, Prodi Ilmu Komputer UNIMED</span></div>
+      <div class="odm-row"><span class="odm-label">Jam Penjemputan</span><span class="odm-value">⏰ ${o.pickupTime}</span></div>`;
+  }
+
+  const proofHtml = o.paymentMode === 'cash'
+    ? `<div class="odm-row"><span class="odm-label">Bukti Bayar</span><span class="odm-value"><span class="proof-cash-badge">💵 Cash di Tempat</span></span></div>`
+    : o.proofDataURL
+      ? `<div class="odm-row"><span class="odm-label">Bukti Transfer</span>
+          <span class="odm-value">
+            <img src="${o.proofDataURL}" style="width:80px;height:80px;object-fit:cover;border-radius:8px;border:2px solid var(--green-light);cursor:pointer" onclick="openProofModal('${o.id}')" title="Klik untuk perbesar">
+          </span></div>`
+      : `<div class="odm-row"><span class="odm-label">Bukti Transfer</span><span class="odm-value" style="color:var(--gray)">Belum diunggah</span></div>`;
+
+  document.getElementById('odm-content').innerHTML = `
+    <div class="odm-row"><span class="odm-label">Pelanggan</span><span class="odm-value">${o.name}</span></div>
+    <div class="odm-row"><span class="odm-label">WhatsApp</span><span class="odm-value">${o.phone}</span></div>
+    <div class="odm-row"><span class="odm-label">Produk</span><span class="odm-value">${o.items?.map(i => i.emoji + ' ' + i.name + ' × ' + i.qty).join('<br>') || '—'}</span></div>
+    <div class="odm-row"><span class="odm-label">Subtotal</span><span class="odm-value">Rp ${(o.sub || 0).toLocaleString('id')}</span></div>
+    <div class="odm-row"><span class="odm-label">Ongkos Kirim</span><span class="odm-value">${(o.ongkir || 0) > 0 ? 'Rp ' + (o.ongkir).toLocaleString('id') : 'Gratis'}</span></div>
+    <div class="odm-row"><span class="odm-label">Total</span><span class="odm-value" style="color:var(--green);font-size:1.05rem;font-weight:700">Rp ${(o.grandTotal || 0).toLocaleString('id')}</span></div>
+    <div class="odm-row"><span class="odm-label">Metode Bayar</span><span class="odm-value">${o.paymentMode === 'cash' ? '💵 Cash di Tempat' : '🏦 Transfer ' + o.bank}</span></div>
+    ${proofHtml}
+    <div class="odm-row"><span class="odm-label">Tipe Pengambilan</span><span class="odm-value">${typeBadge(o.deliveryType)}</span></div>
+    ${locationHtml}
+    <div class="odm-row"><span class="odm-label">Catatan</span><span class="odm-value">${o.notes || '—'}</span></div>
+    <div class="odm-row"><span class="odm-label">Status</span><span class="odm-value">${statusBadge(o.status)}</span></div>
+    <div class="odm-row"><span class="odm-label">Waktu Pesan</span><span class="odm-value">${o.date} ${o.time}</span></div>
+    <div style="margin-top:.8rem">
+      <strong style="font-size:.85rem">Riwayat Status:</strong>
+      ${(o.statusHistory || []).map(h => `<div style="font-size:.78rem;color:var(--gray);padding:3px 0;border-bottom:1px solid #f5f5f5">
+        📌 ${h.date} ${h.time} — <strong>${statusLabel(h.status)}</strong>${h.note ? ' — ' + h.note : ''}
+      </div>`).join('')}
+    </div>`;
+
+  document.getElementById('odm-actions').innerHTML = actionButtons(o);
+  document.getElementById('order-detail-overlay').classList.add('open');
+}
+
+function closeOrderDetail() { document.getElementById('order-detail-overlay').classList.remove('open'); }
+document.getElementById('order-detail-overlay').addEventListener('click', function(e) { if (e.target === this) closeOrderDetail(); });
+
+// ===================== STATUS MANAGEMENT =====================
+const STATUS_ACTIONS = {
+  pending:    [{to: 'verified',   cls: 'btn-verify',  label: '✅ Verifikasi Bayar',  note: 'Pembayaran dikonfirmasi'}],
+  verified:   [{to: 'processing', cls: 'btn-process',  label: '🥤 Mulai Buat Jus',    note: 'Jus sedang dibuat'}],
+  processing: [{to: 'ready',      cls: 'btn-ready',    label: '📦 Jus Siap',          note: 'Jus siap diambil/dikirim'}],
+  ready:      [{to: 'delivered',  cls: 'btn-deliver',  label: '🚚 Tandai Selesai',    note: 'Pesanan selesai diterima'}],
+};
+
+function actionButtons(o) {
+  const acts = STATUS_ACTIONS[o.status] || [];
+  const btns = acts.map(a => `<button class="action-btn ${a.cls}" onclick="updateOrderStatus('${o.id}','${a.to}','${a.note}')">${a.label}</button>`);
+  if (o.paymentMode === 'transfer' && o.proofDataURL)
+    btns.push(`<button class="action-btn btn-view-proof" onclick="openProofModal('${o.id}')">🖼️ Bukti</button>`);
+  if (o.deliveryType === 'gps' && o.gps && ['ready', 'processing'].includes(o.status)) {
+    const mapsUrl = `https://www.google.com/maps/dir/${BASE_LAT},${BASE_LNG}/${o.gps.lat},${o.gps.lng}/@${(BASE_LAT+o.gps.lat)/2},${(BASE_LNG+o.gps.lng)/2},15z/data=!4m2!4m1!3e0`;
+    btns.push(`<a href="${mapsUrl}" target="_blank" class="action-btn btn-maps">🗺️ Maps</a>`);
+  }
+  if (['pending', 'verified', 'processing'].includes(o.status))
+    btns.push(`<button class="action-btn btn-cancel" onclick="updateOrderStatus('${o.id}','cancelled','Dibatalkan admin')">✕ Batal</button>`);
+  return btns.join(' ') || '—';
+}
+
+function updateOrderStatus(orderId, newStatus, note = '') {
+  const o = DB.orders.find(x => x.id === orderId);
+  if (!o) return;
+  o.status = newStatus;
+  if (!o.statusHistory) o.statusHistory = [];
+  const now = new Date();
+  o.statusHistory.push({
+    status: newStatus,
+    time:   now.toTimeString().slice(0, 5),
+    date:   now.toISOString().split('T')[0],
+    note
+  });
+
+  broadcast('ORDER_STATUS_UPDATE', {orderId, newStatus});
+  if (currentSuccessOrderId === orderId) updateTrackerFromOrder(o);
+
+  showToast(`✅ Status ${orderId} → ${statusLabel(newStatus)}`);
+  showLiveNotif(`📦 ${o.name}: ${statusLabel(newStatus)}`, 'success');
+
+  closeOrderDetail();
+  const sec = document.querySelector('.admin-section.active')?.id;
+  if (sec === 'admin-dashboard') renderDashboard();
+  if (sec === 'admin-orders')    renderAllOrders();
+  updatePendingBadge();
+}
+
+// ===================== PRODUCTS =====================
+function renderProducts() {
+  document.getElementById('product-mgmt-grid').innerHTML = DB.products.map(p => {
+    const stockClass = p.stock === 0 ? 'stock-out' : p.stock < 10 ? 'stock-low' : 'stock-ok';
+    return `
+    <div class="product-mgmt-card">
+      <div class="pmg-emoji">${p.emoji}</div>
+      <div class="pmg-name">${p.name}</div>
+      <div style="margin-bottom:.8rem"><span class="${stockClass}">Stok: ${p.stock} cup</span></div>
+      <label class="form-label">💰 Harga (Rp)</label>
+      <div class="pmg-row">
+        <input type="number" class="pmg-input" id="price-${p.id}" value="${p.price}" min="1000" step="500">
+        <button class="pmg-save-btn" onclick="savePrice('${p.id}')">Simpan</button>
+      </div>
+      <label class="form-label">📦 Stok (cup)</label>
+      <div class="pmg-row">
+        <input type="number" class="pmg-input" id="stock-${p.id}" value="${p.stock}" min="0" step="1">
+        <button class="pmg-save-btn" onclick="saveStock('${p.id}')">Update</button>
+      </div>
+      <div class="pmg-toggle">
+        <span style="font-size:.85rem">Produk Aktif</span>
+        <div class="toggle-switch ${p.active ? 'on' : ''}" id="toggle-${p.id}" onclick="toggleProduct('${p.id}')"></div>
+      </div>
+      <div class="live-sync-badge">⚡ Perubahan langsung live ke pelanggan</div>
+    </div>`;
+  }).join('');
+}
+
+function savePrice(id) {
+  const v = parseInt(document.getElementById('price-' + id).value);
+  if (v >= 500) {
+    const prod = DB.products.find(p => p.id === id);
+    if (prod) {
+      prod.price = v;
+      cart.forEach(item => { if (item.id === id) item.price = v; });
+      broadcast('PRODUCT_UPDATE', {});
+      showToast(`✅ Harga ${prod.name} → Rp ${v.toLocaleString('id')}`);
+      showLiveNotif(`💰 Harga ${prod.name} diperbarui: Rp ${v.toLocaleString('id')}`, 'warning');
+      renderMenu(); renderProducts();
+    }
+  }
+}
+
+function saveStock(id) {
+  const v = parseInt(document.getElementById('stock-' + id).value);
+  if (v >= 0) {
+    const prod = DB.products.find(p => p.id === id);
+    if (prod) {
+      prod.stock = v;
+      broadcast('PRODUCT_UPDATE', {});
+      showToast(`✅ Stok ${prod.name} → ${v} cup`);
+      showLiveNotif(`📦 Stok ${prod.name} diperbarui: ${v} cup`, 'warning');
+      renderMenu(); renderProducts();
+    }
+  }
+}
+
+function toggleProduct(id) {
+  const prod = DB.products.find(p => p.id === id);
+  if (prod) {
+    prod.active = !prod.active;
+    document.getElementById('toggle-' + id).classList.toggle('on');
+    broadcast('PRODUCT_UPDATE', {});
+    showToast(prod.active ? '✅ Produk diaktifkan' : '⛔ Produk dinonaktifkan', prod.active ? 'green' : 'orange');
+    renderMenu();
+  }
+}
+
+// ===================== REPORTS =====================
+function renderReports() {
+  const completed = DB.orders.filter(o => o.status === 'delivered');
+  const totalRev  = completed.reduce((s, o) => s + (o.grandTotal || 0), 0);
+  const totalUnits= completed.reduce((s, o) => s + (o.items?.reduce((a, i) => a + i.qty, 0) || 0), 0);
+  const gpsRev    = completed.filter(o => o.deliveryType === 'gps').reduce((s, o) => s + (o.ongkir || 0), 0);
+
+  document.getElementById('report-stats').innerHTML = `
+    <div class="stat-card green">
+      <div class="stat-label">Total Pendapatan</div>
+      <div class="stat-value">Rp ${(totalRev / 1000).toFixed(0)}K</div>
+      <div class="stat-sub">Dari pesanan selesai</div>
+    </div>
+    <div class="stat-card orange">
+      <div class="stat-label">Pesanan Selesai</div>
+      <div class="stat-value">${completed.length}</div>
+      <div class="stat-sub">Tidak termasuk dibatalkan</div>
+    </div>
+    <div class="stat-card yellow">
+      <div class="stat-label">Total Unit Terjual</div>
+      <div class="stat-value">${totalUnits} cup</div>
+      <div class="stat-sub">Hanya dari pesanan selesai</div>
+    </div>
+    <div class="stat-card blue">
+      <div class="stat-label">Pendapatan Ongkir GPS</div>
+      <div class="stat-value">Rp ${(gpsRev / 1000).toFixed(1)}K</div>
+      <div class="stat-sub">Dari antar ke lokasi</div>
+    </div>`;
+
+  const daily = {};
+  completed.forEach(o => {
+    if (!daily[o.date]) daily[o.date] = {orders: 0, units: 0, revenue: 0, gps: 0, pickup: 0};
+    daily[o.date].orders++;
+    daily[o.date].units   += (o.items?.reduce((a, i) => a + i.qty, 0) || 0);
+    daily[o.date].revenue += (o.grandTotal || 0);
+    if (o.deliveryType === 'gps') daily[o.date].gps++;
+    else daily[o.date].pickup++;
+  });
+
+  document.getElementById('report-tbody').innerHTML = Object.entries(daily)
+    .sort((a, b) => b[0].localeCompare(a[0]))
+    .map(([date, d]) => `
+      <tr>
+        <td>${date}</td>
+        <td><strong>${d.orders}</strong></td>
+        <td>${d.units} cup</td>
+        <td><strong>Rp ${d.revenue.toLocaleString('id')}</strong></td>
+        <td style="font-size:.82rem">📍 ${d.gps} GPS / 🏃 ${d.pickup} Pickup</td>
+      </tr>`).join('') ||
+    '<tr><td colspan="5" style="text-align:center;color:var(--gray);padding:2rem">Belum ada pesanan selesai</td></tr>';
+}
+
+// ===================== HELPERS =====================
+function paymentBadge(o) {
+  if (o.paymentMode === 'cash') return `<span class="type-badge type-cash">💵 Cash</span>`;
+  return `<span class="type-badge type-pickup" style="background:#e3f2fd;color:#0d47a1">🏦 ${o.bank || 'Transfer'}</span>`;
+}
+function typeBadge(type) {
+  if (type === 'pickup') return `<span class="type-badge type-pickup">🏃 Ambil Sendiri</span>`;
+  if (type === 'gps')    return `<span class="type-badge type-gps">📍 Antar Lokasi</span>`;
+  return `<span class="type-badge">${type || '—'}</span>`;
+}
+function statusBadge(status) {
+  const map = {
+    pending:    ['status-pending',    '⏳ Menunggu'],
+    verified:   ['status-verified',   '✅ Terverifikasi'],
+    processing: ['status-processing', '🥤 Dibuat'],
+    ready:      ['status-ready',      '📦 Siap'],
+    delivered:  ['status-delivered',  '🚚 Selesai'],
+    cancelled:  ['status-cancelled',  '✕ Dibatalkan']
+  };
+  const [cls, label] = map[status] || ['status-pending', status];
+  return `<span class="status-badge ${cls}">${label}</span>`;
+}
+function statusLabel(s) {
+  return {
+    pending: 'Menunggu Verifikasi', verified: 'Terverifikasi',
+    processing: 'Jus Sedang Dibuat', ready: 'Siap Diambil/Dikirim',
+    delivered: 'Selesai', cancelled: 'Dibatalkan'
+  }[s] || s;
+}
+
+// ===================== SAMPLE DATA =====================
+function initSampleOrders() {
+  const now       = new Date();
+  const today     = now.toISOString().split('T')[0];
+  const yesterday = new Date(now - 86400000).toISOString().split('T')[0];
+
+  // Koordinat GPS contoh — sekitar kampus UNIMED (3.6066002, 98.7142641)
+  const sampleGPS = {lat: 3.6070, lng: 98.7155};
+  const sampleRoute = getBestRoute(sampleGPS.lat, sampleGPS.lng);
+
+  const samples = [
+    {name: 'Siti Rahayu',  phone: '0812xxxx1234', status: 'delivered',  payMode: 'transfer', bank: 'BNI',     type: 'gps',    gps: sampleGPS, ongkir: sampleRoute.fee, date: yesterday, time: '08:15'},
+    {name: 'Budi Santoso', phone: '0856xxxx5678', status: 'processing', payMode: 'cash',     bank: '—',       type: 'pickup', gps: null, ongkir: 0, date: today, time: '10:30'},
+    {name: 'Dewi Lestari', phone: '0821xxxx9012', status: 'pending',    payMode: 'transfer', bank: 'Mandiri', type: 'pickup', gps: null, ongkir: 0, date: today, time: '12:45'},
+  ];
+
+  samples.forEach((s, idx) => {
+    const prod = DB.products[idx % 3];
+    const qty  = idx + 2;
+    DB.orders.push({
+      id: `FJ-0000${idx}`, name: s.name, phone: s.phone, notes: '',
+      items: [{id: prod.id, name: prod.name, emoji: prod.emoji, price: prod.price, qty}],
+      sub: prod.price * qty, ongkir: s.ongkir,
+      grandTotal: prod.price * qty + s.ongkir,
+      bank: s.bank,
+      paymentMode: s.payMode,
+      proofDataURL: null,
+      status: s.status,
+      date: s.date, time: s.time,
+      deliveryType: s.type,
+      pickupPoint: 'Gedung 77 — Prodi Ilmu Komputer UNIMED',
+      pickupTime:  s.type === 'pickup' ? '09.00–10.00' : '—',
+      deliveryDetail: s.type === 'gps' ? 'Depan kafe' : '—',
+      deliveryTime: '09.00–10.00',
+      gps:         s.gps,
+      gpsDistance: s.gps ? parseFloat(haversineDistance(BASE_LAT, BASE_LNG, s.gps.lat, s.gps.lng).toFixed(2)) : 0,
+      routeInfo:   s.type === 'gps' ? {...sampleRoute} : null,
+      statusHistory: [
+        {status: 'pending', time: s.time, date: s.date, note: 'Pesanan masuk'},
+        ...(['verified', 'processing', 'ready', 'delivered'].includes(s.status) ? [{status: 'verified', time: '11:00', date: s.date, note: 'Pembayaran dikonfirmasi'}] : []),
+        ...(['processing', 'ready', 'delivered'].includes(s.status) ? [{status: 'processing', time: '11:30', date: s.date, note: 'Jus sedang dibuat'}] : []),
+        ...(s.status === 'delivered' ? [{status: 'delivered', time: '12:00', date: s.date, note: 'Pesanan selesai diterima'}] : [])
+      ]
+    });
+  });
+}
+
+// ===================== INIT =====================
+initSampleOrders();
+renderMenu();
+updateCounts();
+updatePendingBadge();
+</script>
+</body>
+</html>
